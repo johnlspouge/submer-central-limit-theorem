@@ -16,7 +16,7 @@ Primarily, the code estimates sequence length and mutation probability per base 
 
 For all 3 types of submers, the CLTs depend on the following autocovariance function. Let the indicator Y<sub>i</sub> = 1 if the i-th k-mer is a submer, and 0 otherwise. The base class file **submer.py** calculates cov[Y<sub>0</sub>,Y<sub>i</sub>] from the expected products E[Y<sub>0</sub>Y<sub>i</sub>] provided by the 3 derived class files (**jls_syncmer_closed.py**, **jls_syncmer_open.py**, and **jls_minimizer.py**). 
 
-## The &alpha;-test probabilities of Yun & Shaw
+## The &alpha;-test probabilities of Shaw & Yu
 
 The code also implements some general formulas relevant to the preprint
 
