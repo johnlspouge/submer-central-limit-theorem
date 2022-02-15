@@ -121,8 +121,8 @@ def _to_syncmer_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_un
     if length_genome is None:
         mu_y = syncmer.probability()
         L_hat = length_point_estimate( count_of_syncmers, mu_y ) # estimated genome length
-    elif not isinstance(length_genome, int) or length_genome <= 0:
-        raise Exception("'length_genome' must be a positive integer.")
+    elif not isinstance(length_genome, float) or length_genome <= 0:
+        raise Exception("'length_genome' must be a positive float.")
     else:
         L_hat = length_genome # actual genome length
     delta = 0.0 # The standard deviation in the denominator of the standardized variate can be arbitrarily small, frustrating Stein's method.
@@ -150,10 +150,13 @@ def _test_to_syncmer_Wilson_score_intervals_for_theta():
     ]
     for i in range(3):
         count_of_syncmers = counts_of_syncmers[i]
-        count_of_unmutated_syncmers = count_of_syncmers * 0.9
+        count_of_unmutated_syncmers = int( count_of_syncmers * 0.9 + 0.5 )
         assert isclose(theta_point_estimate( count_of_syncmers, count_of_unmutated_syncmers, k ), 0.010480741793785553) # The point estimate depends only on syncmer ratios.
         alpha_0 = 0.05
         d = to_syncmer_closed_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_unmutated_syncmers, alpha_0, k, s, length_genome=None ) 
+        for key in d:
+            assert allclose( d[key], thetas0[i][key] )
+        d = to_syncmer_closed_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_unmutated_syncmers, alpha_0, k, s, count_of_syncmers * 4.0 ) 
         for key in d:
             assert allclose( d[key], thetas0[i][key] )
         
