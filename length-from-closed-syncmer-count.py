@@ -8,6 +8,9 @@ Calculates confidence interval for sequence length from count of closed syncmers
 
 # Syncmer_Closed(k, s) # k-mer syncmers with s-codes
 
+import sys
+sys.path.append("./modules")
+
 from argparse import ArgumentParser, RawTextHelpFormatter
 import jls_submer_clt_mgr
 from jls_submer_to_interval_util import to_length_interval

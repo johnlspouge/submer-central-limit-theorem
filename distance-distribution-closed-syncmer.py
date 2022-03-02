@@ -8,6 +8,9 @@ Calculates confidence interval for sequence length from count of closed syncmers
 
 # Syncmer_Closed(k, s) # k-mer syncmers with s-codes
 
+import sys
+sys.path.append("./modules")
+
 from argparse import ArgumentParser, RawTextHelpFormatter
 from jls_submer import Submer
 from jls_syncmer_closed import Syncmer_Closed
@@ -20,13 +23,13 @@ def main():
     k = argument.kmer_length
     s = argument.smer_length
     m = argument.max_distance
-    is_yu_and_shaw = argument.is_yu_and_shaw
+    is_test_probabilities = argument.is_test_probabilities
     
     submer = Syncmer_Closed( k, s )
     p = []
     for i in range(0,m+1):    
         p.append(submer.first_passage_probability(i))
-    if is_yu_and_shaw:
+    if is_test_probabilities:
         p = Submer.to_test_probabilities(submer.probability(), p)
     output( p )    
 
@@ -44,8 +47,8 @@ def check( argument ):
         raise Exception( f'Error: smer_length <= kmer_length : {argument.smer_length} <= {argument.kmer_length}.' )
     if argument.max_distance <= 0:
         raise Exception( f'Error: max_distance <= 0 : {argument.max_distance} <= 0.' )
-    if not argument.is_yu_and_shaw:
-        argument.is_yu_and_shaw = None
+    if not argument.is_test_probabilities:
+        argument.is_test_probabilities = None
 
         
 def getArguments():
@@ -57,8 +60,8 @@ def getArguments():
                         help="SMER_LENGTH is the length s of s-mers within a closed syncmer.")
     parser.add_argument("-m", "--max_distance", dest="max_distance", type=int, required=True,
                         help="MAX_DISTANCE is the maximum distance of interest between closed syncmers.")
-    parser.add_argument("-y", "--is_yu_and_shaw", dest="is_yu_and_shaw", default=False, action="store_true", # ? use estimate for L in Stein's method ?
-                        help="IS_YU_AND_SHAW calculates with the flag and the qualitative method without it.")
+    parser.add_argument("-y", "--is_test_probabilities", dest="is_test_probabilities", default=False, action="store_true", # ? alpha-test probabilities ?
+                        help="IS_TEST_PROBABILITIES calculates Shaw & Yu alpha-test probabilities with the flag and first-passage probabilities without it.")
     return parser
     
 if __name__ == "__main__":

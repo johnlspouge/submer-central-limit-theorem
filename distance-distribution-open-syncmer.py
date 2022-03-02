@@ -8,6 +8,9 @@ Calculates confidence interval for sequence length from count of open syncmers.
 
 # Syncmer_Open(k, s, t) # k-mer syncmers with s-codes and t-offset
 
+import sys
+sys.path.append("./modules")
+
 from argparse import ArgumentParser, RawTextHelpFormatter
 from jls_submer import Submer
 from jls_syncmer_open import Syncmer_Open
@@ -21,13 +24,13 @@ def main():
     s = argument.smer_length
     t = argument.t_offset_of_smer
     m = argument.max_distance
-    is_yu_and_shaw = argument.is_yu_and_shaw
+    is_test_probabilities = argument.is_test_probabilities
     
     submer = Syncmer_Open( k, s, t )
     p = []
     for i in range(0,m+1):    
         p.append(submer.first_passage_probability(i))
-    if is_yu_and_shaw:
+    if is_test_probabilities:
         p = Submer.to_test_probabilities(submer.probability(), p)
     output( p )    
 
@@ -50,8 +53,8 @@ def check( argument ):
         raise Exception( f'Error: kmer_length - smer_length < t_offset_of_smer : {u} < {argument.t_offset_of_smer}.' )
     if argument.max_distance <= 0:
         raise Exception( f'Error: max_distance <= 0 : {argument.max_distance} <= 0.' )
-    if not argument.is_yu_and_shaw:
-        argument.is_yu_and_shaw = None
+    if not argument.is_test_probabilities:
+        argument.is_test_probabilities = None
         
 def getArguments():
     parser = ArgumentParser(description='Calculates distance distribution for open syncmers.\n',
@@ -63,9 +66,9 @@ def getArguments():
     parser.add_argument("-t", "--t_offset_of_smer", dest="t_offset_of_smer", type=int, required=True,
                         help="T_OFFSET_OF_SMER is the offset of the minimum s-mer within an open syncmer [0 <= t <= k-s].")
     parser.add_argument("-m", "--max_distance", dest="max_distance", type=int, required=True,
-                        help="MAX_DISTANCE is the maximum distance of interest between closed syncmers.")
-    parser.add_argument("-y", "--is_yu_and_shaw", dest="is_yu_and_shaw", default=False, action="store_true", # ? use estimate for L in Stein's method ?
-                        help="IS_YU_AND_SHAW calculates with the flag and the qualitative method without it.")
+                        help="MAX_DISTANCE is the maximum distance of interest between open syncmers.")
+    parser.add_argument("-y", "--is_test_probabilities", dest="is_test_probabilities", default=False, action="store_true", # ? alpha-test probabilities ?
+                        help="IS_TEST_PROBABILITIES calculates Shaw & Yu alpha-test probabilities with the flag and first-passage probabilities without it.")
     return parser
     
 if __name__ == "__main__":

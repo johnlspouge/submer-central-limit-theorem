@@ -8,6 +8,9 @@ Calculates confidence interval for sequence length from count of minimizers.
 
 # Minimizer(w, k) # (w,k)-minimizers = w-windows of k-mers
 
+import sys
+sys.path.append("./modules")
+
 from argparse import ArgumentParser, RawTextHelpFormatter
 import jls_submer_clt_mgr
 from jls_submer_to_interval_util import to_length_interval

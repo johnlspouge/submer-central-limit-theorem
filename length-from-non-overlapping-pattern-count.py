@@ -12,22 +12,27 @@ import sys
 sys.path.append("./modules")
 
 from argparse import ArgumentParser, RawTextHelpFormatter
+from math import isclose
 import jls_submer_clt_mgr
 from jls_submer_to_interval_util import to_length_interval
+import jls_pattern_util
 
 def main(): 
     parser = getArguments()
     argument = parser.parse_args()
-    check( argument )  
+    check( argument ) 
+    
     count_of_submers = argument.number_of_submers
     confidence = argument.confidence
     alpha_0 = 1.0 - confidence # for consistency with z-score
     is_estimate = argument.is_estimate
+
     k = argument.kmer_length
-    s = argument.smer_length
-    t = argument.t_offset_of_smer
+    patterns = argument.patterns
+    nucleotide2probability = argument.nucleotide2probability
+
     try:
-        h = jls_submer_clt_mgr.to_syncmer_open_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, t, is_estimate )
+        h = jls_submer_clt_mgr.to_non_overlapping_pattern_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, patterns, nucleotide2probability, is_estimate )
         interval = to_length_interval( h )
     except:
         interval = [None, None]
@@ -48,17 +53,31 @@ def output( h_output ):
 
 # Check and fixes arguments if possible.    
 def check( argument ):
+    LEN_NUCLEOTIDES = 4
     if argument.kmer_length <= 0:
         raise Exception( f'Error: kmer_length = {argument.kmer_length} <= 0.' )
-    if argument.smer_length <= 0:
-        raise Exception( f'Error: smer_length = {argument.smer_length} <= 0.' )
-    if argument.kmer_length <= argument.smer_length:
-        raise Exception( f'Error: kmer_length <= smer_length : {argument.kmer_length} <= {argument.smer_length}.' )
-    if argument.t_offset_of_smer < 0:
-        raise Exception( f'Error: t_offset_of_smer = {argument.t_offset_of_smer} < 0.' )
-    u = argument.kmer_length - argument.smer_length
-    if u < argument.t_offset_of_smer:
-        raise Exception( f'Error: kmer_length - smer_length < t_offset_of_smer : {u} < {argument.t_offset_of_smer}.' )
+    # argument.patterns
+    patterns = argument.patterns.split(',')
+    for pattern in patterns:
+        if not jls_pattern_util.is_dna_iupac(pattern):
+            raise Exception( f'Error: {pattern} is not a DNA IUPAC string.' )
+    argument.patterns = patterns
+    # argument.frequencies
+    frequencies = argument.frequencies.split(',')
+    if len(frequencies) != LEN_NUCLEOTIDES:
+        raise Exception( f'Error: Each of a,c,g,t (in that order) should be given a frequency : {argument.frequencies}.' )
+    try:
+        frequencies = list(map(float, frequencies))
+    except:
+        raise Exception( f'Error: Each of the {LEN_NUCLEOTIDES} frequencies should be a float: {argument.frequencies}.' )
+    if not isclose(sum(frequencies), 1.0):
+        raise Exception( f'Error: The {LEN_NUCLEOTIDES} frequencies should sum to 1.0: {argument.frequencies} and sum = {sum(frequencies)}.' )
+    nucleotides = 'acgt'  
+    nucleotide2probability = {}
+    for i in range(LEN_NUCLEOTIDES):
+        nucleotide2probability[nucleotides[i]] = frequencies[i]
+    argument.nucleotide2probability = nucleotide2probability
+    # remaining arguments
     if argument.confidence <= 0.0:
         raise Exception( f'Error: confidence = {argument.confidence} <= 0.0.' )
     if 1.0 <= argument.confidence:
@@ -67,14 +86,14 @@ def check( argument ):
         argument.is_estimate = None
         
 def getArguments():
-    parser = ArgumentParser(description='Calculates sequence length from submer count of open syncmers.\n',
+    parser = ArgumentParser(description='Calculates sequence length from submer count of non-overlapping patterns.\n',
                             formatter_class=RawTextHelpFormatter)
     parser.add_argument("-k", "--kmer_length", dest="kmer_length", type=int, required=True, 
                         help="KMER_LENGTH is the open syncmer length k.", metavar="KMER_LENGTH")
-    parser.add_argument("-s", "--smer_length", dest="smer_length", type=int, required=True,
-                        help="SMER_LENGTH is the length s of s-mers within an open syncmer.", metavar="SMER_LENGTH")
-    parser.add_argument("-t", "--t_offset_of_smer", dest="t_offset_of_smer", type=int, required=True,
-                        help="T_OFFSET_OF_SMER is the offset of the minimum s-mer within an open syncmer [0 <= t <= k-s].")
+    parser.add_argument("-p", "--patterns", dest="patterns", type=str, required=True, 
+                        help="PATTERNS is a set of patterns as IUPAC DNA strings, separated by commas (if 2 or more).", metavar="PATTERNS")
+    parser.add_argument("-f", "--frequencies", dest="frequencies", type=str, default="0.25,0.25,0.25,0.25",
+                        help="FREQUENCIES gives the probabilities for an independent letters model, in order, of acgt, defaulting to uniform frequencies.", metavar="FREQUENCIES")
     parser.add_argument("-n", "--number_of_submers", dest="number_of_submers", type=int, required=True,
                         help="NUMBER_OF_SUBMERS is the count of open syncmers within a sequence.", metavar="NUMBER_OF_SUBMERS")
     parser.add_argument("-c", "--confidence", dest="confidence", type=float, default=0.95, # size of the confidence interval 

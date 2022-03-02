@@ -6,6 +6,9 @@ Calculates confidence interval for mutation probability per letter from count of
 # Patterned after:
 #   https://github.com/medvedevgroup/mutation-rate-intervals
 
+import sys
+sys.path.append("./modules")
+
 from argparse import ArgumentParser, RawTextHelpFormatter
 import jls_submer_clt_mgr
 from jls_submer_to_interval_util import to_theta_interval

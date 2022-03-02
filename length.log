@@ -34,3 +34,15 @@ python length-from-minimizer-count.py  -k 10 -w 3 -n 1000000 -c 0.95
 sig	method	LengthLow	LengthHigh
 0.95	qualitative	1998703.143690898	2001297.697771511
 
+python length-from-non-overlapping-pattern-count.py  -k 6 -p "a,cg" -f "0.15,0.2,0.5,0.15" -n 100 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	345.90397351525644	462.547235890268
+
+python length-from-non-overlapping-pattern-count.py  -k 6 -p "a,cg" -f "0.15,0.2,0.5,0.15" -n 10000 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	39422.78832938991	40585.66288001565
+
+python length-from-non-overlapping-pattern-count.py  -k 6 -p "a,cg" -f "0.15,0.2,0.5,0.15" -n 1000000 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	3994190.031030128	4005818.420179276
+
