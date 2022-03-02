@@ -20,11 +20,11 @@ https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformati
 
 The executables have the -h (help) option to explain their arguments. The system calls in various *_make.py files display the arguments and the *.log files display the output of the executables.
 
-1. **distance-distribution\*.py** outputs first-passage probabilities. If the '-y' flag is set, it outputs alpha-test probabilities.
+1. **distance-distribution....py** outputs first-passage probabilities. If the '-y' flag is set, it outputs alpha-test probabilities.
 
-2. **length-from\*.py** outputs a confidence interval for the sequence length from the submer count of a sequence.
+2. **length-from....py** outputs a confidence interval for the sequence length from the submer count of a sequence.
 
-3. **theta-from\*.py** outputs a confidence interval for the mutation probability per letter from the submer count of a sequence and the submer counts common to a reference sequence and a mutated version.
+3. **theta-from....py** outputs a confidence interval for the mutation probability per letter from the submer count of a sequence and the submer counts common to a reference sequence and a mutated version.
 
 ## **modules/** contains the files performing the computations.
 
