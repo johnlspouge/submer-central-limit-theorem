@@ -32,6 +32,7 @@ class Non_Overlapping_Pattern_Prob(Submer):
             cdf += self._prob[i]
             self._cdf.append(cdf)
         self._first_passage_probability = {}
+        self._first_passage_probability_downsampled = {} # _first_passage_probability[d][i] = f^(\delta)[i]
     def get_length2probability(self):
         return self._length2probability
     def _check(k, length2probability):
@@ -84,6 +85,25 @@ class Non_Overlapping_Pattern_Prob(Submer):
         for j in range(0,(i-m0)//(m0-1)+1):
             f += ((-1)**(j%2))*(ph**(j+1))*comb((i-m0)-(m0-1)*j, j)
         return f
+    # Returns the first_passage_probability for submers randomly down-sampled by a factor of d.
+    #   d-1 = the expected number of submers before a sampled submer, consistent with Edgar's notation.
+    def first_passage_probability_downsampled(self,i,d=None):
+        if d is None:
+            return self.first_passage_probability(i)
+        if d < 1.0:
+            raise Exception(f'd < 1.0 : {d}')
+        delta = 1.0-1.0/d
+        assert 0.0 < delta < 1.0  
+        fppd = self._first_passage_probability_downsampled
+        # Returns the _first_passage_probability_downsampled(i,d).
+        if (i,d) not in fppd:
+            f_d = 0.0
+            for j in range(1,i):
+                f_d += self.first_passage_probability(j) * self.first_passage_probability_downsampled(i-j,d)
+            f_d *= delta
+            f_d += (1.0-delta)*self.first_passage_probability(i)
+            self._first_passage_probability_downsampled[i, d] = f_d # Divides by p for conditional probability
+        return self._first_passage_probability_downsampled[i, d]
     # Returns the first 0,1,2 moments of the submer first passage probabilities, aka, nearest-neighbor distance.
     def first_passage_moment_analytic(self,m):
         if m == 0:
@@ -166,6 +186,14 @@ def _test_Non_Overlapping_Pattern_Prob():
     assert isclose(nopp.first_passage_moment_analytic(1) * nopp.probability(), 1.0)
     fpm = nsum(lambda m: m*m*nopp.first_passage_probability(m), [1, inf])
     assert isclose(nopp.first_passage_moment_analytic(2), fpm)
+    # Tests first_passage_probability_downsampled.
+    MAX = 20
+    D = 1/0.9
+    # Tests results by hand regressively.
+    fppds0 = [0.0, 0.09, 0.0909, 0.081909, 0.07371908999999999, 
+              0.06634719089999998, 0.05971247190899999, 0.053741224719089986, 0.04836710224719089, 0.04353039202247191]
+    fppds = [ nopp.first_passage_probability_downsampled(i,D) for i in range(len(fppds0)) ]
+    assert np.allclose( fppds, fppds0, atol=1.0e-08 )
 
 def main(): 
     _test_Non_Overlapping_Pattern_Prob()
