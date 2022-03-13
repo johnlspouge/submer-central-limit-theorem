@@ -92,18 +92,25 @@ class Non_Overlapping_Pattern_Prob(Submer):
             return self.first_passage_probability(i)
         if d < 1.0:
             raise Exception(f'd < 1.0 : {d}')
+        if i == 0:
+            return 0.0
         delta = 1.0-1.0/d
         assert 0.0 < delta < 1.0  
         fppd = self._first_passage_probability_downsampled
         # Returns the _first_passage_probability_downsampled(i,d).
-        if (i,d) not in fppd:
+        if d not in fppd:
+            fppd[d] = {}
+        if i not in fppd[d]:
             f_d = 0.0
             for j in range(1,i):
                 f_d += self.first_passage_probability(j) * self.first_passage_probability_downsampled(i-j,d)
             f_d *= delta
             f_d += (1.0-delta)*self.first_passage_probability(i)
-            self._first_passage_probability_downsampled[i, d] = f_d # Divides by p for conditional probability
-        return self._first_passage_probability_downsampled[i, d]
+            self._first_passage_probability_downsampled[d][i] = f_d 
+        return self._first_passage_probability_downsampled[d][i]
+    # Frees the storage consumed in computing first_passage_probability_downsampled for downsampling factor d.
+    def first_passage_probability_downsampled_pop(self,d):
+        self._first_passage_probability_downsampled.pop(d, None)
     # Returns the first 0,1,2 moments of the submer first passage probabilities, aka, nearest-neighbor distance.
     def first_passage_moment_analytic(self,m):
         if m == 0:
@@ -194,6 +201,12 @@ def _test_Non_Overlapping_Pattern_Prob():
               0.06634719089999998, 0.05971247190899999, 0.053741224719089986, 0.04836710224719089, 0.04353039202247191]
     fppds = [ nopp.first_passage_probability_downsampled(i,D) for i in range(len(fppds0)) ]
     assert np.allclose( fppds, fppds0, atol=1.0e-08 )
+    # Checks first_passage_probability_downsampled_pop, which frees memory after down-sampling computation.
+    fppds = [ nopp.first_passage_probability_downsampled(i,2*D) for i in range(len(fppds0)) ]
+    nopp.first_passage_probability_downsampled_pop(D)
+    nopp.first_passage_probability_downsampled_pop(2*D)
+    nopp.first_passage_probability_downsampled_pop(3*D) # Behaves well on unknown down-sampling factors.
+    assert nopp._first_passage_probability_downsampled == {}
 
 def main(): 
     _test_Non_Overlapping_Pattern_Prob()
