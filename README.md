@@ -2,37 +2,33 @@
 
 ## The central limit theorems  (**CLT**s)
 
-The code was inspired by the preprint
+The code was inspired by 
 
 A. Blanca et al. (2021)<br/> 
 The statistics of k-mers from a sequence undergoing a simple mutation process without spurious matches.<br/> 
-DOI: 10.1101/2021.01.15.426881
+J Comput Biol. 2022 Feb;29(2):155-168. doi: 10.1089/cmb.2021.0431. Epub 2022 Feb 1.
 
 which used Stein's method to develop CLTs for the k-mer sketch of sequences. Under reasonable assumptions, the k-mer sketch can determine sequence length exactly because the it lists all k-mers in the sequence. In contrast, submers sample the k-mers in a sequence. Thus, the submer count does not determine the sequence length exactly, but yields probabilisitic bounds on it through a CLT. Direct use of Stein's method fails for submer sketches because usually they do not determine the sequence length exactly. In principle, however, Stein's method provides an approximate heuristic bound through an "estimate method". In practice, the estimate method fails for many parameter values, because the sparsity of submers causes the bound from Stein's method to be too generous. Accordingly, the code relies on a "qualitative method", leaving simulations to estimate the speed of the CLT convergence.  
 
-Primarily, the code estimates sequence length and mutation probability per base by using submer counts in central limit theorems. Presently, the submers can be of 4 types: closed syncmers, open syncmers, minimizers, or minimally overlapping k-mers. Note, however, the context-dependency of minimizers obstructed the estimation of the corresponding mutation probabilities. The code also calculates the first-passage probabilities (inter-submer distance distribution) for each submer type. A general formula converts the first-passage probabilities to the alpha-test probabilities of  
+Primarily, the code estimates sequence length and mutation probability per base by using submer counts in central limit theorems. Presently, the submers can be of 4 types: closed syncmers, open syncmers, minimizers, or minimally overlapping k-mers. Note, however, the context-dependency of minimizers obstructed the estimation of the corresponding mutation probabilities. The code also calculates the first-passage probabilities (inter-submer distance distribution) for each submer type. A general formula converts the first-passage probabilities to the alpha-run test probabilities of  
 
 J. Shaw & Y.W. Yu (2021)<br />
 Theory of local k-mer selection with applications to long-read alignment<br />
 https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btab790/6432031<br />
 
+In the following, an island is a maximal contiguous set of bases not intersecting a submer.
+
 ## **The main directory** contains Python executables.
 
 The executables have the -h (help) option to explain their arguments. The system calls in various *_make.py files display the arguments and the *.log files display the output of the executables.
 
-<<<<<<< HEAD
-1. **distance-distribution....py** outputs first-passage probabilities. If the '-y' flag is set, it outputs alpha-test probabilities.
-
-2. **length-from....py** outputs a confidence interval for the sequence length from the submer count of a sequence.
-
-3. **theta-from....py** outputs a confidence interval for the mutation probability per letter from the submer count of a sequence and the submer counts common to a reference sequence and a mutated version.
-=======
-1. **distance-distribution*.py** outputs first-passage probabilities. If the '-y' flag is set, it outputs alpha-test probabilities.
+1. **distance-distribution*.py** outputs first-passage probabilities. If the '-y' flag is set, it outputs alpha-run test probabilities.
 
 2. **length-from*.py** outputs a confidence interval for the sequence length from the submer count of a sequence.
 
 3. **theta-from*.py** outputs a confidence interval for the mutation probability per letter from the submer count of a sequence and the submer counts common to a reference sequence and a mutated version.
->>>>>>> 8f5830eded418b30b77f16efa049029d4d8df68e
+
+4. **island-statistics*.py** outputs the expected sum of the 0-th, 1-st, and 2-nd powers of the base counts in each island divided by the reference genome length L, as L -> &infin;. These are the average fraction of bases initiating an island, the average fraction of bases in an island, and the expected island size.
 
 ## **modules/** contains the files performing the computations.
 
