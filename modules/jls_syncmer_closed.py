@@ -96,7 +96,11 @@ def _test_Syncmer_Closed():
     tps0 = [ Syncmer_Closed.to_test_probability_analytic(u,alpha) for alpha in range(length) ] # test_probabilities0
     tps = Syncmer.to_test_probabilities(p,fpps) # test_probabilities
     assert np.allclose(tps,tps0)
-    
+    # Tests lagging moments for island calculations.
+    assert isclose(syncmer_closed.first_passage_moment(0,k)*p, 0.0) 
+    assert isclose(syncmer_closed.first_passage_moment(1,k)*p, 0.0)
+    assert isclose(syncmer_closed.first_passage_moment(2,k)*p, 0.0) 
+    # f = [0, 1/3, 4/21, 5/42, 5/14, 0] # The 4-window guarantee makes further computation pointless.
 def _test_Syncmer_Closed_Simulate():
     r = 100000 #(Monte Carlo realizations)
     np.random.seed(31415)

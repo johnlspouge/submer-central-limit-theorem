@@ -147,7 +147,16 @@ def _test_Non_Overlapping_Pattern():
     assert nop.indicators('taaa') == [False, True]
     assert nop.indicators('cgaa') == [True, False]
     assert nop.indicators('tcga') == [False, True]
-    
+    # Tests lagging moments for island calculations.
+    k=6
+    patterns = ['a', 'cg']
+    nucleotide2probability = {'a':0.15,'c':0.2,'g':0.5,'t':0.15}
+    nop = Non_Overlapping_Pattern(k,patterns,nucleotide2probability)
+    p = nop.probability() # syncmer density
+    assert isclose(nop.first_passage_moment(0,k)*p, 0.03962409765625) 
+    assert isclose(nop.first_passage_moment(1,k)*p, 0.136140859375)
+    assert isclose(nop.first_passage_moment(2,k)*p, 0.799362265625) 
+    # f=[0.0, 0.15, 0.2275, 0.178375, 0.12886875, 0.0917009375, 0.065058921875, 0.04612998984375, 0.032704599179687495, 0.02318591031835937, 0.016437563852636717, 0.011653338242905273, 0.008261581121205811, 0.005857010128734412, 0.004152300497303669, 0.0029437544098346773, 0.002086961198629109, 0.0014795415778512749, 0.0010489142213106727, 0.0007436229303289443, 0.0005271880686485354, 0.0003737475653183606, 0.00026496662365575296, 0.00018784687357555394]    
 def _test_Non_Overlapping_Pattern_Simulate():
     r = 100000 #(Monte Carlo realizations) # tested for 100*r, too
     np.random.seed(31415)

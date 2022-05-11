@@ -43,10 +43,12 @@ class Submer(ABC):
     #     P[ Y[i]=1 and Y[j]=0 for 0<j<i | Y[0]=1 ] 
     def first_passage_probability(self,i):
         pass
-    # Returns the submer first passage probabilities, aka, nearest-neighbor distance.
-    def first_passage_moment(self,m):
+    # Returns the moments of the submer first passage probabilities, aka, nearest-neighbor distance.
+    def first_passage_moment(self,m,
+                             k=0): # k is the shift in the island statistics
         assert isinstance(m, int) and 0 <= m
-        return mpmath.nsum(lambda i: self.first_passage_probability(i)*(i**m), [1, mpmath.inf] )
+        assert isinstance(k, int) and 0 <= k
+        return mpmath.nsum(lambda i: self.first_passage_probability(int(i+k))*(i**m), [1, mpmath.inf] )
     # Returns the submer mutation covariances.
     def covariance(self,i):
         p = self.probability()

@@ -136,7 +136,14 @@ def _test_Syncmer_Open():
     assert isclose(syncmer_open.first_passage_moment(0), 1.0) # sum(fpps0)
     assert isclose(syncmer_open.probability() * syncmer_open.first_passage_moment(1), 1.0) # sum(i*fpps0[i])
     assert isclose(syncmer_open.first_passage_moment(2), 30.2555844444103) # sum((i**2)*fpps0[i])
-
+    # Tests lagging moments for island calculations.
+    syncmer_open = Syncmer_Open(6,2,4)
+    k=6
+    p = syncmer_open.probability() # syncmer density
+    assert isclose(syncmer_open.first_passage_moment(0,k)*p, 0.0575757575757576) 
+    assert isclose(syncmer_open.first_passage_moment(1,k)*p, 0.174365079365079)
+    assert isclose(syncmer_open.first_passage_moment(2,k)*p, 0.800723325467849) 
+    # f = [0.0, 0.16666666666666666, 0.11904761904761904, 0.08928571428571427, 0.06944444444444443, 0.15555555555555553, 0.11212121212121211, 0.0835137085137085, 0.06379731379731379, 0.04972309436595151, 0.03272297808012093, 0.021625030062530057, 0.014168337789661319, 0.009049782824292626, 0.0054801691393170085, 0.003296003321379261, 0.0019523349068417092, 0.0011308345612351303, 0.0006390323026802223, 0.00035743922998532834, 0.00019700395873133167, 0.00010676000395039424, 5.696909398239726e-05, 3.0077290745075236e-05]
 def _test_Syncmer_Open_Simulate():
     r = 100000 #(Monte Carlo realizations)
     np.random.seed(31415)
