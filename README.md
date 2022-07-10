@@ -34,21 +34,24 @@ Executables have an -h (help) option to explain their arguments.
 3. **theta-from...py** inputs the submer counts of a reference sequence and a mutated version and outputs a confidence interval for the mutation probability per letter.
 
 **modules/** contains the files performing the computations. A brief summary of the most important of these files follow.
-1. **jls_submer_clt_mgr.py** (manager file for submer CLTs) is the main programming interface. Please refer to its comments on the arguments and the return of its subroutines for more information on the CLTs.
+
+**jls_submer_clt_mgr.py** (manager file for submer CLTs) is the main programming interface. Please refer to its comments on the arguments and the return of its subroutines for more information on the CLTs.
 
 For all types of submers, let the indicator Y<sub>i</sub> = 1 if the i-th k-mer is a submer, and 0 otherwise. The CLTs depend on the the autocovariance function cov[Y<sub>0</sub>,Y<sub>i</sub>]. The base class file **submer.py** calculates the autocovariance from the expected products E[Y<sub>0</sub>Y<sub>i</sub>] provided by the derived class files for each submer type (**jls_syncmer_parametrized.py**, **jls_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**). 
 
-## The &alpha;-test probabilities of Shaw & Yu
+**Some miscellaneous topics**
 
-The derived class files (**jls_syncmer_closed.py**, **jls_syncmer_open.py**, **jls_syncmer_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**) calculate the first-passage probabilities 
+1. The &alpha;-test probabilities of Shaw & Yu
+2. 
+The derived class files (**jls_syncmer_parametrized.py**, **jls_syncmer_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**) calculate first-occurrence probabilities (inter-submer distance distribution)
 
 f<sub>i</sub> = Pr{ Y<sub>i</sub> = 1 and Y<sub>j</sub> = 0 (0 < j < i) | Y<sub>0</sub> = 1 }.
 
-Note in contrast, the expected products E[Y<sub>0</sub>Y<sub>i</sub>] leave Y<sub>j</sub> for 0 < j < i unrestricted. 
+In contrast, the expected products E[Y<sub>0</sub>Y<sub>i</sub>] leave Y<sub>j</sub> for 0 < j < i unrestricted. 
 
-The file **submer.py** interconverts the &alpha;-test probabilities Pr(f,&alpha;) of Yun & Shaw and first-passage probabilities f<sub>i</sub>, which always determine each other. Yun & Shaw give general four-variable recursions for the &alpha;-test probabilities, but the recursions here are much faster.
+**submer.py** interconverts the &alpha;-test probabilities Pr(f,&alpha;) of Yun & Shaw and first-passage probabilities f<sub>i</sub>, which determine each other according to relatively simple formulas. Yun & Shaw give general four-variable recursions for the &alpha;-test probabilities, but the recursions here are much faster.
 
-## Window probabilities for (w,k)-minimizers
+2. Window probabilities for (w,k)-minimizers
 
 Minimizers have a window guarantee: if two sequences share a (w+k-1)-mer, then they share a (w,k)-minimizer. Subsequences of length &alpha;+k-1 only have a window probability &pi;(&alpha;), where &pi;(&alpha;) = 1 for &alpha; &ge; w; and &pi;(&alpha;) &lt; 1 otherwise. **jls_minimizer_common_submer.py** calculates &pi;(&alpha;).
 
