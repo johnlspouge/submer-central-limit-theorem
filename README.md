@@ -24,7 +24,7 @@ Theory of local k-mer selection with applications to long-read alignment<br />
 https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btab790/6432031<br />
 
 **programs/** contains Python executables and ...make.py drivers, which display calls to the programs.<br />
-**Output/** contains the output from the ...make.py drivers, so diff can verify the executables by comparing their outputs ...log.<br />
+**Output/** contains the output from the ...make.py drivers, so diff can verify the executables by comparing their output files ...log.<br />
 **modules/** contains Python modules and classes, tested by a main() to demonstrate calls to the module subroutines.<br />
 
 **programs/** 
@@ -42,7 +42,7 @@ For all types of submers, let the indicator Y<sub>i</sub> = 1 if the i-th k-mer 
 **Some miscellaneous topics**
 
 1. The &alpha;-test probabilities of Shaw & Yu
-2. 
+
 The derived class files (**jls_syncmer_parametrized.py**, **jls_syncmer_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**) calculate first-occurrence probabilities (inter-submer distance distribution)
 
 f<sub>i</sub> = Pr{ Y<sub>i</sub> = 1 and Y<sub>j</sub> = 0 (0 < j < i) | Y<sub>0</sub> = 1 }.
