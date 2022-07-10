@@ -34,11 +34,9 @@ Executables have an -h (help) option to explain their arguments.
 3. **theta-from...py** inputs the submer counts of a reference sequence and a mutated version and outputs a confidence interval for the mutation probability per letter.
 
 **modules/** contains the files performing the computations. A brief summary of the most important of these files follow.
-1. **jls_submer_clt_mgr.py** (manager file for submer CLTs) is the main programming interface.<br/>
+1. **jls_submer_clt_mgr.py** (manager file for submer CLTs) is the main programming interface. Please refer to its comments on the arguments and the return of its subroutines for more information on the CLTs.
 
-Please refer to its comments on the arguments and the return of its subroutines for information on the CLTs.
-
-For all types of submers, let the indicator Y<sub>i</sub> = 1 if the i-th k-mer is a submer, and 0 otherwise. The CLTs depend on the the autocovariance function cov[Y<sub>0</sub>,Y<sub>i</sub>]. The base class file **submer.py** calculates from the expected products E[Y<sub>0</sub>Y<sub>i</sub>] provided by the derived class files for each submer type (**jls_syncmer_closed.py**, **jls_syncmer_open.py**, **jls_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**). 
+For all types of submers, let the indicator Y<sub>i</sub> = 1 if the i-th k-mer is a submer, and 0 otherwise. The CLTs depend on the the autocovariance function cov[Y<sub>0</sub>,Y<sub>i</sub>]. The base class file **submer.py** calculates the autocovariance from the expected products E[Y<sub>0</sub>Y<sub>i</sub>] provided by the derived class files for each submer type (**jls_syncmer_parametrized.py**, **jls_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**). 
 
 ## The &alpha;-test probabilities of Shaw & Yu
 
