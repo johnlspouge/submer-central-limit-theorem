@@ -6,46 +6,15 @@ Syncmer_Closed class
 from math import isclose
 import numpy as np
 from jls_syncmer import Syncmer
+from jls_syncmer_parametrized import Syncmer_Parametrized
 
 # R. Edgar (2021) 
 # Syncmers are more sensitive than minimizers for selecting conserved k‑mers in biological sequences. 
 # PeerJ 9: e10805.
-class Syncmer_Closed(Syncmer): 
-    def __init__(self, k, s): # k-mer with s-minimizer at 0-offset index 0 or u
-        super().__init__(k, s)
-    # Returns syncmer indicator for index i.
-    def indicator(self, codes):
-        u = self.u
-        assert len(codes) == u+1
-        minimizer_value = min(codes[0],codes[u])
-        for j in range( 1, u ):
-            if codes[j] < minimizer_value:
-                return 0
-        return 1
-    # Returns estimates of expectation_product_indicators as a list[0...k).
-    #     E[ Y[0]*Y[i] ] = E[ Y[0] ]*E[ Y[i] ] for i > u=k-s.
-    def expectation_product_indicator(self,i):
-        u = self.u
-        p = 2.0/(u+1)
-        if i == 0:
-            return p
-        elif i < u:
-            return 4.0/(i+u+1)/(u+1)
-        elif i == u:
-            return 1.0/(2*u+1) + 4.0/(i+u+1)/(u+1)
-        return p*p
-    # Returns the syncmer first passage probabilities, aka, nearest-neighbor distance distribution.
-    #     P[ Y[i]=1 and Y[j]=0 for 0<j<i | Y[0]=1 ] 
-    def first_passage_probability(self,i): # [0, 1/3, 4/21, 5/42, 5/14, 0] for k=6, u=4 
-        u = self.u
-        p = self.probability()
-        if i == 0:
-            return 0.0  
-        elif i < u:
-            return 4.0*u/(i+u+1)/(i+u)/(i+u-1)/p
-        elif i == u:
-            return (1.0/(2*u+1) + 4.0*u/(i+u+1)/(i+u)/(i+u-1))/p
-        return 0.0
+class Syncmer_Closed(Syncmer_Parametrized): 
+    def __init__(self, k, s, eps=0.0): # k-mer with s-minimizer at 0-offset index 0 or u
+        ts = [0,k-s]
+        super().__init__(k, s, ts, eps)
     # Returns the probability of an alpha-test window containing a closed syncmer.
     def to_test_probability_analytic(u,alpha):
         if alpha <= u:

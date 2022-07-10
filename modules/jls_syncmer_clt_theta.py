@@ -13,7 +13,7 @@ from math import isclose
 from numpy import allclose
 from scipy.stats import norm
 from scipy.optimize import bisect
-from jls_syncmer_open import Syncmer_Open # for tests
+from jls_syncmer_parametrized import Syncmer_Parametrized # for tests
 from jls_syncmer_clt_util import to_sigma_l # Uses to_sigma_square_x, to_gamma_x implicitly.
 
 # Returns the point estimate, the mutation probability per letter.
@@ -42,14 +42,15 @@ def _standardized_variate_w(
         elif _standardized_variate_w > 0.0:
             return float('inf')
         else:
-            raise Exception('The _standardized_variate_w subroutine yields 0/0.')
+            return 0.0
+            #raise Exception('The _standardized_variate_w subroutine yields 0/0.')
     _standardized_variate_w /= sigma_l
     return _standardized_variate_w
 
 def _test_standardized_variate_w():
     theta = 0.0008388608
-    (k,s,t) = (6,2,3)
-    syncmer = Syncmer_Open(k,s,t)
+    (k,s,ts) = (6,2,[3])
+    syncmer = Syncmer_Parametrized(k,s,ts)
     length_genome = 1000000
     count_of_syncmers = 200000
     count_of_unmutated_syncmers = 199000
@@ -120,7 +121,6 @@ def theta_all(count_of_syncmers, count_of_unmutated_syncmers, z_half_epsilon, sy
         else:
             return Interval.PLUS
     def _update(cross0, interval0, theta0, interval, theta):
-        #print(cross0, interval0, theta0, interval, theta)
         if interval0 == Interval.MINUS or interval == Interval.MINUS: # Prioritizes interval0.
             value = -z_half_epsilon
         elif interval0 == Interval.PLUS or interval == Interval.PLUS: # Prioritizes interval0.
@@ -132,9 +132,7 @@ def theta_all(count_of_syncmers, count_of_unmutated_syncmers, z_half_epsilon, sy
             return w-value
         cross = bisect( _zero, theta0, theta )
         if interval0 != Interval.ZERO: # Completes Interval.MINUS or Interval.PLUS.
-            #print(interval2list[interval0])
             interval2list[interval0].extend([cross0, cross])
-            #print(interval2list[interval0])
             if interval != Interval.ZERO:
                 cross0 = cross
                 if interval == Interval.MINUS:
@@ -144,9 +142,6 @@ def theta_all(count_of_syncmers, count_of_unmutated_syncmers, z_half_epsilon, sy
                 else:
                     raise Exception('The mesh is not fine enough to localize changes.')
                 cross = bisect( _zero, cross0, theta )
-                #print(interval2list[interval])
-                #interval2list[interval].extend([cross0, cross])
-                #print(interval2list[interval])
         cross0 = cross
         interval0 = interval
         return interval0, cross0
@@ -159,7 +154,6 @@ def theta_all(count_of_syncmers, count_of_unmutated_syncmers, z_half_epsilon, sy
         interval = _interval(w)
         if interval0 is None: # Initializes Interval, because theta=0.0 may be singular.
             interval0 = interval
-        #print(theta,w,interval)
         if interval0 != interval: # The function has crossed at least one boundary.
             interval0, cross0 = _update(cross0, interval0, theta0, interval, theta)
         theta0 = theta
@@ -222,8 +216,8 @@ def _test_theta_all():
     ]
     alpha = 0.05
     z_half_epsilon = norm.ppf(1.0-0.5*alpha)
-    (k,s,t) = (6,2,3)
-    syncmer = Syncmer_Open(k,s,t)
+    (k,s,ts) = (6,2,[3])
+    syncmer = Syncmer_Parametrized(k,s,ts)
     length_genomes = [1000000, 10000, 100]
     fractions = [0.005, 0.05, 0.5, 0.9]
     for i in range(len(length_genomes)):
