@@ -14,11 +14,12 @@ open(log, 'w').close() # The file {log} is empty.
 # density of closed syncmers = 2 / (u+1)
 # Closed syncmers have a guarantee for a u-window of k-mers.
 
-executable = 'island-statistics-closed-syncmer.py'
+executable = 'island-statistics-parametrized-syncmer.py'
 kmer_length = 6
 smer_length = 2
+t_offsets_of_smer = '0 4'
 
-command = f'python {executable} -k {kmer_length} -s {smer_length}'
+command = f'python {executable} -k {kmer_length} -s {smer_length} -t {t_offsets_of_smer}'
 with open(log, "a") as fh:
     fh.write(command + "\n")
 command = f'{command} >> {log}'
@@ -28,12 +29,12 @@ with open(log, "a") as fh:
 
 # density of open syncmers = 1 / (u+1)
 
-executable = 'island-statistics-open-syncmer.py'
+executable = 'island-statistics-parametrized-syncmer.py'
 kmer_length = 6
 smer_length = 2
-t_offset_of_smer = 4
+t_offsets_of_smer = '4'
 
-command = f'python {executable} -k {kmer_length} -s {smer_length} -t {t_offset_of_smer}'
+command = f'python {executable} -k {kmer_length} -s {smer_length} -t {t_offsets_of_smer}'
 with open(log, "a") as fh:
     fh.write(command + "\n")
 command = f'{command} >> {log}'
