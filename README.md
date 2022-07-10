@@ -9,31 +9,30 @@ The statistics of k-mers from a sequence undergoing a simple mutation process wi
 Journal of Computational Biology 29:155-168
 DOI: 10.1089/cmb.2021.0431
 
-which used Stein's method to develop CLTs for the k-mer sketch of sequences. Under reasonable assumptions, the k-mer sketch can determine sequence length exactly because the it lists all k-mers in the sequence. In contrast, submers sample the k-mers in a sequence. Thus, the submer count does not determine the sequence length exactly, but yields probabilisitic bounds on it through a CLT. Direct use of Stein's method fails for submer sketches because usually they do not determine the sequence length exactly. In principle, however, Stein's method provides an approximate heuristic bound through estimation of the sequence length. In practice, the "estimate method" fails for many parameter values, because the sparsity of submers causes the bound from Stein's method to be too generous. Accordingly, our code relies on a "qualitative method", leaving simulations to estimate the speed of the CLT convergence.  
+which used Stein's method to develop CLTs for the k-mer sketch of sequences. Under reasonable assumptions, the k-mer sketch can determine sequence length exactly because the it lists all k-mers in the sequence. In contrast, submers sample the k-mers in a sequence. Thus, the submer count does not determine the sequence length exactly, but yields probabilisitic bounds on it through a CLT. Direct use of Stein's method fails for submer sketches because usually they do not determine the sequence length exactly. In principle, however, Stein's method provides an approximate heuristic bound through estimation of the sequence length. In practice, the "estimate method" fails for many parameter values, because the sparsity of submers causes the bound from Stein's method to be too generous. Accordingly, our code relies on a "qualitative method", leaving simulations to estimate the accuracy of the confidence intervals from the CLT convergence.  
 
-Primarily, the code estimates sequence length and mutation probability per base by using submer counts in central limit theorems. Presently, the submers can be of 4 types: closed syncmers, open syncmers, minimizers, or minimally overlapping k-mers. Note, however, the context-dependency of minimizers obstructed the estimation of the corresponding mutation probabilities. The code also calculates the first-passage probabilities (inter-submer distance distribution) for each submer type. A general formula converts the first-passage probabilities to the alpha-test probabilities of  
+A. Dutta et al. (2022)<br/>
+Parameterized syncmer schemes improve long-read mapping<br />
+bioRxiv: 2022.01.10.475696
+
+influenced us to generalize our methods from open and closed syncmers to their "parametrized syncmers".
+
+Our code estimates sequence length and mutation probability per base by using submer counts in central limit theorems. Presently, the submers can be of e types: parametrized syncmers, minimizers, or minimally overlapping k-mers. Note, however, the context-dependency of minimizers obstructed the estimation of the corresponding mutation probabilities. The code also calculates the first-occurrence probabilities (the inter-submer distance distribution) for each submer type. A general formula converts the first-passage probabilities to the alpha-run probabilities of  
 
 J. Shaw & Y.W. Yu (2021)<br />
 Theory of local k-mer selection with applications to long-read alignment<br />
 https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btab790/6432031<br />
 
-## **The main directory** contains Python executables.
+**programs/** contains Python executables and ...make.py drivers, which display calls to the programs.<br />
+**Output/** contains the output from the ...make.py drivers, so diff can verify the executables by comparing their outputs ...log.<br />
+**modules/** contains Python modules and classes, tested by a main() to demonstrate calls to the module subroutines.<br />
 
-The executables have the -h (help) option to explain their arguments. The system calls in various *_make.py files display the arguments and the *.log files display the output of the executables.
+**programs/** 
+Executables have an -h (help) option to explain their arguments. 
+1. **distance-distribution...py** outputs first-occurrence probabilities. If the '-y' flag is set, it outputs alpha-test probabilities.
+2. **length-from...py** inputs the submer count of a sequence and outputs a confidence interval for its length.
+3. **theta-from...py** inputs the submer counts of a reference sequence and a mutated version and outputs a confidence interval for the mutation probability per letter.
 
-<<<<<<< HEAD
-1. **distance-distribution....py** outputs first-passage probabilities. If the '-y' flag is set, it outputs alpha-test probabilities.
-
-2. **length-from....py** outputs a confidence interval for the sequence length from the submer count of a sequence.
-
-3. **theta-from....py** outputs a confidence interval for the mutation probability per letter from the submer count of a sequence and the submer counts common to a reference sequence and a mutated version.
-=======
-1. **distance-distribution*.py** outputs first-passage probabilities. If the '-y' flag is set, it outputs alpha-test probabilities.
-
-2. **length-from*.py** outputs a confidence interval for the sequence length from the submer count of a sequence.
-
-3. **theta-from*.py** outputs a confidence interval for the mutation probability per letter from the submer count of a sequence and the submer counts common to a reference sequence and a mutated version.
->>>>>>> 8f5830eded418b30b77f16efa049029d4d8df68e
 
 ## **modules/** contains the files performing the computations.
 
