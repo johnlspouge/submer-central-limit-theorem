@@ -49,7 +49,7 @@ f<sub>i</sub> = Pr{ Y<sub>i</sub> = 1 and Y<sub>j</sub> = 0 (0 < j < i) | Y<sub>
 
 In contrast, the expected products E[Y<sub>0</sub>Y<sub>i</sub>] leave Y<sub>j</sub> for 0 < j < i unrestricted. 
 
-**submer.py** interconverts the &alpha;-test probabilities Pr(f,&alpha;) of Yun & Shaw and first-passage probabilities f<sub>i</sub>, which determine each other according to relatively simple formulas. Yun & Shaw give general four-variable recursions for the &alpha;-test probabilities, but the recursions here are much faster.
+**submer.py** interconverts the &alpha;-test probabilities Pr(f,&alpha;) of Shaw & Yu (2021) and first-passage probabilities f<sub>i</sub>, which determine each other according to relatively simple formulas. Shaw & Yu (2021) give general four-variable recursions for the &alpha;-test probabilities, and Dutta et al (2022) other recursions, but the recursions given here are much faster.
 
 2. Window probabilities for (w,k)-minimizers
 
