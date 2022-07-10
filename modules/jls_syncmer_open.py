@@ -2,102 +2,18 @@
 """
 Syncmer_Open class
 """
-
 from math import isclose
 import numpy as np
-from jls_syncmer import Syncmer
+from jls_syncmer_parametrized import Syncmer_Parametrized
 
 # R. Edgar (2021) 
 # Syncmers are more sensitive than minimizers for selecting conserved k‑mers in biological sequences. 
 # PeerJ 9: e10805.
-class Syncmer_Open(Syncmer): 
-    def __init__(self, k, s, t): # k-mer with s-codes whose minimum is at 0-offset index t
+class Syncmer_Open(Syncmer_Parametrized): 
+    def __init__(self, k, s, t, eps=0.0): # k-mer with s-codes whose minimum is at 0-offset index t
+        ts = [t]
         self.t = t
-        self._first_passage_probability = dict() # _first_passage_probability[i] = f[i]
-        self._fpp = { # Stores recursion values for first_passage_probability.
-            'right':dict(),
-            'left':dict(),
-            'zero':dict(),
-        }
-        super().__init__(k, s)
-    # Returns syncmer indicator for index i.
-    def indicator(self, codes):
-        u = self.u
-        t = self.t
-        assert len(codes) == u+1
-        minimizer = t
-        minimizer_value = codes[minimizer]
-        for j in range(u+1):
-            if j != minimizer and codes[j] < minimizer_value:
-                return 0
-        return 1
-    # Returns estimates of expectation_product_indicators as a list[0...k).
-    #     E[ Y[0]*Y[i] ] = E[ Y[0] ]*E[ Y[i] ] for i > u=k-s.
-    def expectation_product_indicator(self,i):
-        t = self.t
-        u = self.u
-        p = 1.0/(u+1)
-        if u-t < t:
-            t = u-t
-        if i == 0:
-            return p
-        elif i <= t:
-            return 0.0
-        elif i <= u-t:
-            return 1.0/(i+u+1)/(u+1)
-        elif i <= u:
-            return 2.0/(i+u+1)/(u+1)
-        return p*p
-    # Returns the syncmer first passage probabilities, aka, nearest-neighbor distance.
-    #     P[ Y[i]=1 and Y[j]=0 for 0<j<i | Y[0]=1 ] 
-    def first_passage_probability(self,i):
-        u = self.u
-        t = self.t
-        p = self.probability()
-        right = self._fpp['right']
-        left = self._fpp['left']
-        zero = self._fpp['zero']
-        if u-t < t:
-            t = u-t
-        # Returns the probability for only a right (k,s,t)-syncmer in the interval [0:a].
-        def _right_recursion(a):
-            if a < u:
-                return 0.0
-            elif a not in right:
-                ra = _zero_recursion(a-u+t-1)
-                for j in range(t):
-                    ra += _right_recursion(a-j-1)
-                right[a] = ra/(a+1)
-            return right[a]
-        # Returns the probability for only a left (k,s,t)-syncmer in the interval [0:a].
-        def _left_recursion(a):
-            if a < u:
-                return 0.0
-            elif a not in left:
-                ra = _zero_recursion(a-t-1)
-                for j in range(u-t):
-                    ra += _left_recursion(a-j-1)
-                left[a] = ra/(a+1)
-            return left[a]
-        # Returns the probability for no (k,s,t)-syncmer in the interval [0:a].
-        def _zero_recursion(a):
-            if a < u:
-                return 1.0
-            elif a < 0:
-                return 0.0
-            elif a not in zero:
-                ra = 0
-                for j in range(t):
-                    ra += _zero_recursion(a-j-1)
-                for j in range(u-t):
-                    ra += _zero_recursion(a-j-1)
-                zero[a] = ra/(a+1)
-            return zero[a]
-        # Returns E[ Y[i] | Y[0]=1], the first_passage_probability.
-        if i not in self._first_passage_probability:
-            fpp = (_right_recursion(i+u-t-1)+_left_recursion(i+t-1))/(i+u+1)
-            self._first_passage_probability[i] = fpp/p # Divides by p for conditional probability
-        return self._first_passage_probability[i]
+        super().__init__(k, s, ts, eps)
 
 def _test_Syncmer_Open():
     syncmer_open = Syncmer_Open(6,2,3)
