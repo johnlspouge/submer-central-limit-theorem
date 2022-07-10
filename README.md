@@ -2,7 +2,7 @@
 
 ## The central limit theorems  (**CLT**s)
 
-The code was inspired by the preprint
+The code was inspired by the preprint of
 
 A. Blanca et al. (2021)<br/> 
 The statistics of k-mers from a sequence undergoing a simple mutation process without spurious matches.<br/> 
