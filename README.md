@@ -35,9 +35,9 @@ Executables have an -h (help) option to explain their arguments.
 
 **modules/** contains the files performing the computations. A brief summary of the most important of these files follow.
 
-**jls_submer_clt_mgr.py** (manager file for submer CLTs) is the main programming interface. Please refer to its comments on the arguments and the return of its subroutines for more information on the CLTs.
+1. **jls_submer_clt_mgr.py** (manager file for submer CLTs) is the main programming interface. Please refer to its comments on the arguments and the return of its subroutines for more information on the CLTs.
 
-For all types of submers, let the indicator Y<sub>i</sub> = 1 if the i-th k-mer is a submer, and 0 otherwise. The CLTs depend on the the autocovariance function cov[Y<sub>0</sub>,Y<sub>i</sub>]. The base class file **submer.py** calculates the autocovariance from the expected products E[Y<sub>0</sub>Y<sub>i</sub>] provided by the derived class files for each submer type (**jls_syncmer_parametrized.py**, **jls_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**). 
+2. For all types of submers, let the indicator Y<sub>i</sub> = 1 if the i-th k-mer is a submer, and 0 otherwise. The CLTs depend on the the autocovariance function cov[Y<sub>0</sub>,Y<sub>i</sub>]. The base class file **submer.py** calculates the autocovariance from the expected products E[Y<sub>0</sub>Y<sub>i</sub>] provided by the derived class files for each submer type (**jls_syncmer_parametrized.py**, **jls_minimizer.py**, and **jls_non_overlapping_pattern_prob.py**). 
 
 **Some miscellaneous topics**
 
