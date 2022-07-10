@@ -7,7 +7,7 @@ Calculates confidence interval for mutation probability per letter from count of
 #   https://github.com/medvedevgroup/mutation-rate-intervals
 
 import sys
-sys.path.append("./modules")
+sys.path.insert(0,"../modules")
 
 from argparse import ArgumentParser, RawTextHelpFormatter
 from math import isclose

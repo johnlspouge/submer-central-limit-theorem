@@ -9,7 +9,7 @@ Calculates confidence interval for sequence length from count of open syncmers.
 # Syncmer_Open(k, s, t) # k-mer syncmers with s-codes and t-offset
 
 import sys
-sys.path.append("./modules")
+sys.path.insert(0,"../modules")
 
 from argparse import ArgumentParser, RawTextHelpFormatter
 from math import isclose

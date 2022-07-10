@@ -9,7 +9,7 @@ Calculates confidence interval for sequence length from count of minimizers.
 # Minimizer(w, k) # (w,k)-minimizers = w-windows of k-mers
 
 import sys
-sys.path.append("./modules")
+sys.path.insert(0,"../modules")
 
 from argparse import ArgumentParser, RawTextHelpFormatter
 import jls_submer_clt_mgr
