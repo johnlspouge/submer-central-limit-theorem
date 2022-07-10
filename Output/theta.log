@@ -1,24 +1,24 @@
-python theta-from-closed-syncmer-count.py  -k 10 -s 3 -n 100 -u 90 -c 0.95
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 100 -u 90 -c 0.95
 sig	length	ThetaLow	ThetaHigh
 0.95	estimated	0.0038246028859374994	0.026768396719205736
 
-python theta-from-closed-syncmer-count.py  -k 10 -s 3 -n 1000 -u 900 -c 0.95
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 1000 -u 900 -c 0.95
 sig	length	ThetaLow	ThetaHigh
 0.95	estimated	0.0075514367078124995	0.014438353293887887
 
-python theta-from-closed-syncmer-count.py  -k 10 -s 3 -n 10000 -u 9000 -c 0.95
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 10000 -u 9000 -c 0.95
 sig	length	ThetaLow	ThetaHigh
 0.95	estimated	0.009450735795312502	0.011614293370478451
 
-python theta-from-open-syncmer-count.py  -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95
 sig	length	ThetaLow	ThetaHigh
 0.95	estimated	0.004766521473437501	0.02212378135308212
 
-python theta-from-open-syncmer-count.py  -k 10 -s 3 -t 1 -n 1000 -u 900 -c 0.95
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 1000 -u 900 -c 0.95
 sig	length	ThetaLow	ThetaHigh
 0.95	estimated	0.008141804017187499	0.01343489293831921
 
-python theta-from-open-syncmer-count.py  -k 10 -s 3 -t 1 -n 10000 -u 9000 -c 0.95
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 10000 -u 9000 -c 0.95
 sig	length	ThetaLow	ThetaHigh
 0.95	estimated	0.009678183292187503	0.01134505707316853
 
@@ -34,11 +34,11 @@ python theta-from-non-overlapping-pattern-count.py  -k 6 -p "a,cg" -f "0.15,0.2,
 sig	length	ThetaLow	ThetaHigh
 0.95	estimated	0.015933390351790554	0.0190056967957065
 
-python theta-from-closed-syncmer-count.py  -k 10 -s 3 -n 100 -u 90 -c 0.95 -l 400
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 100 -u 90 -c 0.95 -l 400
 sig	length	ThetaLow	ThetaHigh
 0.95	actual	0.0038246028859374994	0.026768396719205736
 
-python theta-from-open-syncmer-count.py  -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95 -l 800
+python theta-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95 -l 800
 sig	length	ThetaLow	ThetaHigh
 0.95	actual	0.004766521473437501	0.02212378135308212
 

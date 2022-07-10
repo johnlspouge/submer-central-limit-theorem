@@ -1,8 +1,8 @@
-python island-statistics-closed-syncmer.py -k 6 -s 2
+python island-statistics-parametrized-syncmer.py -k 6 -s 2 -t 0 4
 islands:genome_fraction_of_starts	islands:genome_fraction_of_bases	islands:expected_size-biased_size
 0.0	0.0	0.0
 
-python island-statistics-open-syncmer.py -k 6 -s 2 -t 4
+python island-statistics-parametrized-syncmer.py -k 6 -s 2 -t 4
 islands:genome_fraction_of_starts	islands:genome_fraction_of_bases	islands:expected_size-biased_size
 0.0575757575757576	0.174365079365079	0.800723325467849
 
