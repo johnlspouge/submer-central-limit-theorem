@@ -17,7 +17,7 @@ bioRxiv: 2022.01.10.475696
 
 influenced us to generalize our methods for open and closed syncmers to their "parametrized syncmers".
 
-Our code estimates sequence length and mutation probability per base by using submer counts in central limit theorems. Presently, the submers can be of e types: parametrized syncmers, minimizers, or minimally overlapping k-mers. Note, however, the context-dependency of minimizers obstructed the estimation of the corresponding mutation probabilities. The code also calculates the first-occurrence probabilities (the inter-submer distance distribution) for each submer type. A general formula converts the first-passage probabilities to the alpha-run probabilities of  
+Our code estimates sequence length and mutation probability per base by using submer counts in central limit theorems. Presently, the submers can be of 3 types: parametrized syncmers, minimizers, or minimally overlapping k-mers. Note, however, the context-dependency of minimizers obstructed the estimation of the corresponding mutation probabilities. The code also calculates the first-occurrence probabilities (the inter-submer distance distribution) for each submer type. A general formula converts the first-passage probabilities to the alpha-run probabilities of  
 
 J. Shaw & Y.W. Yu (2021)<br />
 Theory of local k-mer selection with applications to long-read alignment<br />
