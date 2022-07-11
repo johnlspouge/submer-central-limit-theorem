@@ -15,7 +15,18 @@ A. Dutta et al. (2022)<br/>
 Parameterized syncmer schemes improve long-read mapping<br />
 bioRxiv: 2022.01.10.475696
 
-influenced us to generalize our methods for open and closed syncmers to their "parametrized syncmers".
+influenced us to generalize our methods for open and closed syncmers to their "parametrized syncmers". The main practical change in the code is in the parameters for syncmers. For example,
+
+python theta-from-closed-syncmer-count.py -k 10 -s 3 -n 100 -u 90 -c 0.95
+python theta-from-open-syncmer-count.py -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95
+
+are now called as
+
+python theta-from-parametrized-syncmer-count.py -k 10 -s 3 -t 0 7 -n 100 -u 90 -c 0.95
+python theta-from-parametrized-syncmer-count.py -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95
+
+where closed (k,s)=(10,3) syncmers are now parametrized (k,s, ts)=(10, 3,'0 7') syncmers, 
+and open (k,s,t)=(10,3,1) syncmers are now parametrized (k,s, ts)=(10, 3,'1') syncmers.
 
 Our code estimates sequence length and mutation probability per base by using submer counts in central limit theorems. Presently, the submers can be of 3 types: parametrized syncmers, minimizers, or minimally overlapping k-mers. Note, however, the context-dependency of minimizers obstructed the estimation of the corresponding mutation probabilities. The code also calculates the first-occurrence probabilities (the inter-submer distance distribution) for each submer type. A general formula converts the first-occurrence probabilities to the alpha-run probabilities of  
 
