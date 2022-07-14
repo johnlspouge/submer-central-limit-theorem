@@ -19,8 +19,9 @@ def main():
     k = argument.kmer_length
     s = argument.smer_length
     ts = argument.t_offsets_of_smer
+    eps = argument.eps
     
-    submer = Syncmer_Parametrized( k, s, ts )
+    submer = Syncmer_Parametrized( k, s, ts, eps )
     p = submer.probability()
 
     h_output = {}
@@ -48,6 +49,8 @@ def check( argument ):
             raise Exception( f'Error: t_offsets_of_smer = {argument.t_offsets_of_smer} < 0.' )
         if u < t:
             raise Exception( f'Error: kmer_length - smer_length < t_offset_of_smer : {u} < {argument.t_offsets_of_smer}.' )
+    if not 0.0 <= argument.eps < 1.0:
+        raise Exception( f'Error: the downsampling probability must satisfy 0.0 <= eps = {argument.eps} < 1.0.' )
         
 def getArguments():
     parser = ArgumentParser(description='Calculates distance distribution for open syncmers.\n',
@@ -58,6 +61,8 @@ def getArguments():
                         help="SMER_LENGTH is the length s of s-mers within an open syncmer.", metavar="SMER_LENGTH")
     parser.add_argument("-t", "--t_offsets_of_smer", dest="t_offsets_of_smer", type=int, nargs='+', required=True,
                         help="T_OFFSETS_OF_SMER is the offset(s) of the minimum s-mer within a paramtrized syncmer.", metavar="T_OFFSETS_OF_SMER")
+    parser.add_argument("-e", "--eps", dest="eps", type=float, default=0.0,
+                        help="EPS is the rejection probability when downsampling paramtrized syncmers (EPS=0.0 for no downsampling).", metavar="EPS")
     return parser
     
 if __name__ == "__main__":

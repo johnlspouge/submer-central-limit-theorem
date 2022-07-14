@@ -24,8 +24,9 @@ def main():
     k = argument.kmer_length
     s = argument.smer_length
     ts = argument.t_offsets_of_smer
+    eps = argument.eps
     try:
-        h = to_syncmer_parametrized_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_unmutated_syncmers, alpha_0, k, s, ts, length )
+        h = to_syncmer_parametrized_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_unmutated_syncmers, alpha_0, k, s, ts, eps, length )
         interval = to_theta_interval( h )
     except:
         interval = [None, None]
@@ -59,6 +60,8 @@ def check( argument ):
             raise Exception( f'Error: t_offsets_of_smer = {argument.t_offsets_of_smer} < 0.' )
         if u < t:
             raise Exception( f'Error: kmer_length - smer_length < t_offset_of_smer : {u} < {argument.t_offsets_of_smer}.' )
+    if not 0.0 <= argument.eps < 1.0:
+        raise Exception( f'Error: the downsampling probability must satisfy 0.0 <= eps = {argument.eps} < 1.0.' )
     if argument.confidence <= 0.0:
         raise Exception( f'Error: confidence = {argument.confidence} <= 0.0.' )
     if 1.0 <= argument.confidence:
@@ -75,6 +78,8 @@ def getArguments():
                         help="SMER_LENGTH is the length s of s-mers within a syncmer.", metavar="SMER_LENGTH")
     parser.add_argument("-t", "--t_offsets_of_smer", dest="t_offsets_of_smer", type=int, nargs='+', required=True,
                         help="T_OFFSETS_OF_SMER is the offset(s) of the minimum s-mer within a paramtrized syncmer.", metavar="T_OFFSETS_OF_SMER")
+    parser.add_argument("-e", "--eps", dest="eps", type=float, default=0.0,
+                        help="EPS is the rejection probability when downsampling paramtrized syncmers (EPS=0.0 for no downsampling).", metavar="EPS")
     parser.add_argument("-n", "--number_of_submers", dest="number_of_submers", type=int, required=True,
                         help="NUMBER_OF_SUBMERS is the count of submers within a sequence.", metavar="NUMBER_OF_SUBMERS")
     parser.add_argument("-u", "--number_of_unmutated_submers", dest="number_of_unmutated_submers", type=int, required=True,
