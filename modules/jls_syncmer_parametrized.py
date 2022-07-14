@@ -22,7 +22,7 @@ class Syncmer_Parametrized(Syncmer):
         s, # s-mer length
         ts, # s-minimizer offsets (starting at 0) that turn the k-mer into a syncmer
         eps=0.0): # rejection probability for downsampling
-        self.ts = sorted(ts)
+        self.ts = sorted(ts, reverse=True)
         counter = dict(Counter(self.ts))
         for e,v in counter.items():
             assert 0 <= e <= k-s

@@ -26,32 +26,32 @@ from jls_syncmer_clt_theta import theta_all, theta_mean
 #   count_of_submers: the (possibly unassembled) counts for the submers
 #   alpha0: the upper bound on the size of the test for left, right, or confidence intervals
 #   (k,s), (k,s,t), or (w,k) are the parameters governing closed syncmers, open syncmers, or minimizers, where k is the k-mer size of the submer. 
-#   is_estimate: (None => qualitative method) or (True => estimate method)
+#   is_approximation: (None => qualitative method) or (True => estimate method)
 
 # Returns None for the estimate method if the bound in Stein's method is too large to be useful.
 
 # Syncmer_Paramterized(k, s, ts) # k-mer syncmers with s-codes
-def to_syncmer_parametrized_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, ts, is_estimate=None ):
-    sp = Syncmer_Parametrized(k, s, ts)
-    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_estimate )   
+def to_syncmer_parametrized_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, ts, eps=0.0, is_approximation=None ):
+    sp = Syncmer_Parametrized(k, s, ts, eps)
+    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_approximation )   
 
 # Minimizer(w, k) # (w,k)-minimizers = w-windows of k-mers
-def to_minimizer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, w, k, is_estimate=None ):
+def to_minimizer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, w, k, is_approximation=None ):
     minimizer = Minimizer(w, k)
-    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, minimizer, is_estimate )
+    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, minimizer, is_approximation )
 
 # The driver needs to construct the non_overlapping_pattern.
-def to_non_overlapping_pattern_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, patterns, nucleotide2probability, is_estimate=None ):
+def to_non_overlapping_pattern_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, patterns, nucleotide2probability, is_approximation=None ):
     non_overlapping_pattern = Non_Overlapping_Pattern(k, patterns, nucleotide2probability)
-    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, non_overlapping_pattern, is_estimate )
+    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, non_overlapping_pattern, is_approximation )
 
 # common Wilson score subroutine for submers
 #   Returns None if Stein's method fails to produce a useful bound.
-def _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, submer, is_estimate=None ):
+def _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, submer, is_approximation=None ):
     k = submer.get_k()
     mu_y = submer.probability()
     covariances = [ submer.covariance(i) for i in range(k) ]
-    if is_estimate is None:
+    if is_approximation is None:
         delta = 0.0 # qualitative method
     else:
         L_hat = length_genome_mean( count_of_submers, mu_y ) 
@@ -73,14 +73,14 @@ def _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sub
 
 # 1 DEPRECATED
 # Syncmer_Closed(k, s) # k-mer syncmers with s-codes
-def to_syncmer_closed_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, is_estimate=None ):
+def to_syncmer_closed_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, is_approximation=None ):
     sp = Syncmer_Parametrized(k, s, [0,k-s])
-    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_estimate )   
+    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_approximation )   
 
 # Syncmer_Open(k, s, t) # k-mer syncmers with s-codes
-def to_syncmer_open_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, t, is_estimate=None ):
+def to_syncmer_open_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, t, is_approximation=None ):
     sp = Syncmer_Parametrized(k, s, [t])
-    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_estimate )
+    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_approximation )
 # 0 DEPRECATED
     
 # Returns the point estimate, the length of the genome.
@@ -102,9 +102,9 @@ def _test_to_submer_Wilson_score_intervals_for_length():
         assert isclose(2/(k-s+1), 0.25) # syncmer density
         assert isclose(length_point_estimate( count_of_submers, sp.probability() ), count_of_submers / 0.25)
         alpha_0 = 0.05
-        is_estimate=None # In the estimate method, the bound in Stein's method was always too large to be useful at alpha_0 = 0.05.
-        d = to_syncmer_parametrized_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, [0,k-s], is_estimate )
-        #d = to_syncmer_closed_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, is_estimate ) # is_estimate=None is the default.
+        is_approximation=None # In the estimate method, the bound in Stein's method was always too large to be useful at alpha_0 = 0.05.
+        d = to_syncmer_parametrized_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, [0,k-s], is_approximation )
+        #d = to_syncmer_closed_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, is_approximation ) # is_approximation=None is the default.
         for key in d:
             assert allclose( d[key], lambdas0[i][key] )
 
@@ -121,7 +121,7 @@ def _test_to_submer_Wilson_score_intervals_for_length():
 #   length_genome: (None => estimate method) or (integer => actual genome length from data)
 
 # Syncmer_Paramterized(k, s, ts) # k-mer syncmers with s-codes
-def to_syncmer_parametrized_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_unmutated_syncmers, alpha_0, k, s, ts, length_genome=None ):
+def to_syncmer_parametrized_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_unmutated_syncmers, alpha_0, k, s, ts, eps=0.0, length_genome=None ):
     sp = Syncmer_Parametrized(k, s, ts)
     return _to_syncmer_Wilson_score_intervals_for_theta( count_of_syncmers, count_of_unmutated_syncmers, alpha_0, sp, length_genome )   
 
