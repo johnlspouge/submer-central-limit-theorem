@@ -13,7 +13,7 @@ from jls_syncmer_parametrized import Syncmer_Parametrized
 # PeerJ 9: e10805.
 class Syncmer_Closed(Syncmer_Parametrized): 
     def __init__(self, k, s, eps=0.0): # k-mer with s-minimizer at 0-offset index 0 or u
-        ts = [0,k-s]
+        ts = (k-s,0)
         super().__init__(k, s, ts, eps)
     # Returns the probability of an alpha-test window containing a closed syncmer.
     def to_test_probability_analytic(u,alpha):
