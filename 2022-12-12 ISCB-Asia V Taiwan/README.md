@@ -1,21 +1,14 @@
 # submer-central-limit-theorem
 
-## The central limit theorems  (**CLT**s)
+## Parametrized syncmers
 
 The code was inspired by the preprint of
-
-A. Blanca et al. (2021)<br/> 
-The statistics of k-mers from a sequence undergoing a simple mutation process without spurious matches.<br/> 
-Journal of Computational Biology 29:155-168
-DOI: 10.1089/cmb.2021.0431
-
-which used Stein's method to develop CLTs for k-mer sketches of sequences. Under some assumptions, the list of all k-mers in a sequence can determine its length exactly because the it lists all k-mers in the sequence. In contrast, submers sample the k-mers in a sequence. Thus, the submer count does not determine the sequence length exactly, but yields probabilistic bounds on it through a CLT. Direct use of Stein's method fails for submer sketches because usually they do not determine the sequence length exactly. In principle, however, Stein's method provides an approximate heuristic bound through estimation of the sequence length. In practice, the "estimate method" fails for many parameter values, because the sparsity of submers causes the bound from Stein's method to be too generous. Accordingly, our code relies on a "qualitative method", leaving simulations to estimate the accuracy of the confidence intervals from the CLT convergence.  
 
 A. Dutta et al. (2022)<br/>
 Parameterized syncmer schemes improve long-read mapping<br />
 bioRxiv: 2022.01.10.475696
 
-influenced us to generalize our methods for open and closed syncmers to their "parametrized syncmers". The main practical change in the code is in the parameters for syncmers. For example,
+which influenced us to generalize our methods for open and closed syncmers to their "parametrized syncmers". The main practical change in the code is in the parameters for syncmers. For example,
 
 python theta-from-closed-syncmer-count.py -k 10 -s 3 -n 100 -u 90 -c 0.95<br />
 python theta-from-open-syncmer-count.py -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95<br />
