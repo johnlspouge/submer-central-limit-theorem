@@ -2,21 +2,21 @@
 
 ## Parametrized syncmers
 
-The code was inspired by the preprint of
+The code reflects concepts in the preprint of
 
 A. Dutta et al. (2022)<br/>
 Parameterized syncmer schemes improve long-read mapping<br />
 bioRxiv: 2022.01.10.475696
 
-which influenced us to generalize our methods for open and closed syncmers to their "parametrized syncmers". The main practical change in the code is in the parameters for syncmers. For example,
+which generalized open and closed syncmers to "parametrized syncmers". The calls below use parameters for syncmers, e.g.,
 
-python theta-from-closed-syncmer-count.py -k 10 -s 3 -n 100 -u 90 -c 0.95<br />
-python theta-from-open-syncmer-count.py -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95<br />
+python distance-distribution-parametrized-syncmer.py -k 6 -s 2 -t 0 4 -m 5<br />
 
-are now called as
+finds the inter-syncmer distance distribution for (k,s,t)=(6,2,{0,4}) (closed) syncmers out to distance 5, where closed syncmers have a window guarantee of 4. Similarly,
 
-python theta-from-parametrized-syncmer-count.py -k 10 -s 3 -t 0 7 -n 100 -u 90 -c 0.95<br />
-python theta-from-parametrized-syncmer-count.py -k 10 -s 3 -t 1 -n 100 -u 90 -c 0.95<br />
+python distance-distribution-parametrized-syncmer.py -k 6 -s 2 -t 1 -m 5 -y<br />
+
+finds the inter-syncmer distance distribution for open (k,s,t)=(6,2,{1}) syncmers out to distance 23. Open syncmers lack a window guarantee. 
 
 where closed (k,s)=(10,3) syncmers are now parametrized (k,s, ts)=(10, 3,'0 7') syncmers,<br />
 and open (k,s,t)=(10,3,1) syncmers are now parametrized (k,s, ts)=(10, 3,'1') syncmers.
