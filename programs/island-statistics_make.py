@@ -5,6 +5,8 @@ from os import system
 log = 'island-statistics.log'
 open(log, 'w').close() # The file {log} is empty.
 
+dir = './'
+
 # Eq (27) gives "islands:genome_fraction_of_starts" mu_y * sum f[k+alpha].
 # Eq (28) gives "islands:genome_fraction_of_starts" mu_y * sum alpha * f[k+alpha].
 # Eq (29) gives "islands:genome_fraction_of_starts" mu_y * sum alpha**2 * f[k+alpha].
@@ -19,7 +21,7 @@ kmer_length = 6
 smer_length = 2
 t_offsets_of_smer = '0 4'
 
-command = f'python {executable} -k {kmer_length} -s {smer_length} -t {t_offsets_of_smer}'
+command = f'python {dir}{executable} -k {kmer_length} -s {smer_length} -t {t_offsets_of_smer}'
 with open(log, "a") as fh:
     fh.write(command + "\n")
 command = f'{command} >> {log}'
@@ -34,7 +36,7 @@ kmer_length = 6
 smer_length = 2
 t_offsets_of_smer = '4'
 
-command = f'python {executable} -k {kmer_length} -s {smer_length} -t {t_offsets_of_smer}'
+command = f'python {dir}{executable} -k {kmer_length} -s {smer_length} -t {t_offsets_of_smer}'
 with open(log, "a") as fh:
     fh.write(command + "\n")
 command = f'{command} >> {log}'
@@ -49,7 +51,7 @@ kmer_length = 6
 patterns = 'a,cg'
 frequencies = '0.15,0.2,0.5,0.15'
 
-command = f'python {executable} -k {kmer_length} -p {patterns} -f {frequencies}'
+command = f'python {dir}{executable} -k {kmer_length} -p {patterns} -f {frequencies}'
 with open(log, "a") as fh:
     fh.write(command + "\n")
 command = f'{command} >> {log}'
