@@ -1,12 +1,12 @@
-python island-statistics-parametrized-syncmer.py -k 6 -s 2 -t 0 4
+python ./island-statistics-parametrized-syncmer.py -k 6 -s 2 -t 0 4
 islands:genome_fraction_of_starts	islands:genome_fraction_of_bases	islands:expected_size-biased_size
 0.0	0.0	0.0
 
-python island-statistics-parametrized-syncmer.py -k 6 -s 2 -t 4
+python ./island-statistics-parametrized-syncmer.py -k 6 -s 2 -t 4
 islands:genome_fraction_of_starts	islands:genome_fraction_of_bases	islands:expected_size-biased_size
 0.0575757575757576	0.174365079365079	0.800723325467849
 
-python island-statistics-non-overlapping-pattern.py -k 6 -p a,cg -f 0.15,0.2,0.5,0.15
+python ./island-statistics-non-overlapping-pattern.py -k 6 -p a,cg -f 0.15,0.2,0.5,0.15
 islands:genome_fraction_of_starts	islands:genome_fraction_of_bases	islands:expected_size-biased_size
 0.03962409765625	0.136140859375	0.799362265625
 
