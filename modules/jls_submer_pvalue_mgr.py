@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Manager routines for Stein's method and a central limit theorem for short-range dependency in submers.
+Manager routines for a p-value from a central limit theorem for short-range dependency in submers.
 """
 
 # A. Blanca et al. (2021) 
@@ -17,7 +17,7 @@ from jls_submer_clt_util import to_sigma_square_x, to_gamma_x, to_delta, z_half_
 from jls_submer_clt_genome_length import length_genome_mean, lower_limit_L_0, lambda_minus, lambda_plus, lambda_zero
 from jls_submer_clt_theta import theta_all, theta_mean
 
-# Returns the Wilson score interval for genomic length L:
+# Returns the Wilson score intervals for genomic length L:
 #   Pr(L in the confidence interval) >= 1.0 - alpha_0
 
 # The following 3 subroutines for submers (closed syncmers, open syncmers, or minimizers) have the following arguments:
@@ -65,20 +65,6 @@ def _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sub
     confidence = lambda_zero( L_0, left, right )
     return confidence
 
-# 1 DEPRECATED
-# Syncmer_Closed(k, s) # k-mer syncmers with s-codes
-def to_syncmer_closed_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, is_approximation=None ):
-    sp = Syncmer_Parametrized(k, s, [0,k-s])
-    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_approximation )   
-# 0 DEPRECATED
-
-# 1 DEPRECATED
-# Syncmer_Open(k, s, t) # k-mer syncmers with s-codes
-def to_syncmer_open_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, t, is_approximation=None ):
-    sp = Syncmer_Parametrized(k, s, [t])
-    return _to_submer_Wilson_score_intervals_for_length( count_of_submers, alpha_0, sp, is_approximation )
-# 0 DEPRECATED
-    
 # Returns the point estimate, the length of the genome.
 def length_point_estimate( count_of_submers, mu_y ): # mu_y is the submer density, submer.probability()
     return length_genome_mean( count_of_submers, mu_y )

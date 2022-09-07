@@ -12,6 +12,9 @@ from math import sqrt,isinf,isclose
 import numpy as np
 from scipy.optimize import bisect
 
+from jls_syncmer_parametrized import Syncmer_Parametrized
+from jls_submer_clt_util import to_sigma_square_x, to_gamma_x
+
 # Returns the point estimate, the length of the genome.
 def length_genome_mean( count_of_submers, mu_y ):
     return count_of_submers/mu_y
@@ -78,9 +81,27 @@ def lambda_zero( L_0, lambda_minus, lambda_plus ):
     assert isinf( lambda_zero[-1] )
     lambda_zero.pop() # Parity in lambda_zero remains unchanged: it is still interval pairs.
     return lambda_zero
+
+# Returns the standardized_variate_w W(L) in the central limit theorem about the genome length.
+def standardized_variate_w(L, submer, count_of_submers): 
+    covariances = [ submer.covariance(i) for i in range(submer.get_k()) ]
+    return _W( L, count_of_submers, submer.probability(), to_sigma_square_x( covariances ), to_gamma_x( covariances ) )
+
+def _test_standardized_variate_w():
+    submer = Syncmer_Parametrized(6, 2, [2])
+    covariances = [ submer.covariance(i) for i in range(submer.get_k()) ]
+    assert isclose(submer.probability(), 0.2)
+    covariances0 = [0.16, -0.04000000000000001, -0.04000000000000001, 0.009999999999999995, 0.004444444444444438, 0.0]
+    assert np.allclose(covariances, covariances0)
+    assert isclose(to_sigma_square_x( covariances ), 0.028888888888888825)
+    assert isclose(to_gamma_x( covariances ), 0.14444444444444457)
+    assert isclose(standardized_variate_w(100,submer, 21), 0.5741692517632151)
+
+# Returns the standardized variate from L, the genome length.
+def _W( L, count_of_submers, mu_y, sigma_square_y, gamma_y ):
+    return (count_of_submers-L*mu_y) / sqrt( L*sigma_square_y+gamma_y )
+
 def _test_lambda():
-    def _W( L, count_of_submers, mu_y, sigma_square_y, gamma_y ):
-        return (count_of_submers-L*mu_y) / sqrt( L*sigma_square_y+gamma_y )
     def _check(lambda0, value, k, count_of_submers, mu_y, sigma_square_y, gamma_y ):
         for L_est in lambda0:
             if not isinf( L_est ):
@@ -153,6 +174,7 @@ def _test_lambda_zero():
     assert lambda_zero( 2, [2,3,7,float('inf')], [5,6,9,10] ) == [3, 5, 6, 7, 9, 10]
 
 def main(): 
+   _test_standardized_variate_w()
    _test_lambda()
    _test_lambda_zero()
     

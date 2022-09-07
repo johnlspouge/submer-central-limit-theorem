@@ -97,7 +97,26 @@ class Submer(ABC):
         assert len(tps) == 3
         f = -(tps[0]-2.0*tps[1]+tps[2])/mu
         return f
-
+    # J Shaw & Y-W Yu (2021)
+    # Theory of local k-mer selection with applications to long-read alignment
+    # Bioinformatics DOI: 10.1093/bioinformatics/btab790
+    # Theorem 4
+    # Consider the simple mutation model with mutation probability per letter theta.
+    # Returns the probability that 2k-1 letters contain a run of alpha=beta+k unmutated letters (0 <= beta < k).
+    def prob_unmutated_run(k, theta, alpha):
+        beta = alpha-k
+        assert 0 <= beta < k
+        if beta == k-1:
+            return (1.0-theta)**(2*k-1)
+        return (2.0+(k-beta-2)*theta)*theta*(1.0-theta)**(k+beta)
+    # Tests prob_unmutated_run().
+    def _test_prob_unmutated_run():
+        k = 4
+        theta = 0.1
+        pur0 = [ 0.14434200000000003, 0.12400290000000003, 0.10628820000000001, 0.4782969000000001 ]
+        pur = [ Submer.prob_unmutated_run(k, theta, k+beta) for beta in range(k) ]
+        assert allclose(pur, pur0)
+    
 # Tests Shaw's formula and its inversion interconverting test_probabilities Pr(F,alpha) and first_passage_probabilities, f[i].
 def _test_Syncmer_Closed_Shaw():
     u = 4 # Syncmer_Closed(6,2)
@@ -117,6 +136,7 @@ def _test_Syncmer_Closed_Shaw():
 
 def main(): 
     _test_Syncmer_Closed_Shaw()
+    Submer._test_prob_unmutated_run()
     
 if __name__ == "__main__":
     main()

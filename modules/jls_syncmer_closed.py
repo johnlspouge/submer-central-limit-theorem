@@ -20,6 +20,29 @@ class Syncmer_Closed(Syncmer_Parametrized):
         if alpha <= u:
             return (2*alpha)/(u+alpha)
         return 1.0
+    # Returns the syncmer complementary alpha-run probabilities in the presence of mutation.
+    def complementary_alpha_run_probability_with_mutation(self, alpha, theta): # theta = 0.0 corresponds to case without mutation
+        if alpha <= 0:
+            return 1.0
+        _carp = self._complementary_alpha_run_probability
+        if self.theta is None or theta != self.theta:
+            self.theta = theta
+            _carp = {}
+        if alpha not in _carp:
+            ts = self.ts 
+            u = self.u
+            assert ts == (u,0)
+            k = self.k
+            q = 0.0
+            for beta in range(alpha+u):
+                for j in range(k-1): # The index beta-t+j is the first mutation.
+                    eps_theta = theta*(1.0-theta)**j
+                    m = beta-t+j
+                    q += eps_theta*_carp(alpha-1-m)*_carp(m-u)
+            q /= u+alpha
+            _carp[alpha] = q
+        return _carp[alpha]
+
 
 def _test_Syncmer_Closed():
     syncmer_closed = Syncmer_Closed(6,2) # Each syncmer has k-s+1 = u+1 codes.

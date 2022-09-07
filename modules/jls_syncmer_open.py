@@ -4,6 +4,7 @@ Syncmer_Open class
 """
 from math import isclose
 import numpy as np
+from jls_submer import Submer
 from jls_syncmer_parametrized import Syncmer_Parametrized
 
 # R. Edgar (2021) 
@@ -13,7 +14,40 @@ class Syncmer_Open(Syncmer_Parametrized):
     def __init__(self, k, s, t, eps=0.0): # k-mer with s-codes whose minimum is at 0-offset index t
         ts = [t]
         self.t = t
+        self._complementary_alpha_run_probability_with_mutation = {}
         super().__init__(k, s, ts, eps)
+    # Returns the syncmer complementary alpha-run probabilities in the presence of mutation.
+    def complementary_alpha_run_probability_with_mutation(self, alpha, theta): # theta = 0.0 corresponds to case without mutation
+        carp = self.complementary_alpha_run_probability_with_mutation
+        _carp = self._complementary_alpha_run_probability_with_mutation
+        u = self.u
+        k = self.k
+        ts = self.ts 
+        assert len(ts) == 1
+        t = ts[0]
+        if alpha <= 0:
+            return 1.0
+        if not hasattr(self,'theta') or theta != self.theta:
+            self.theta = theta
+            _carp = {}
+        if alpha not in _carp:
+            q = 0
+            for beta in range(u+alpha): # The codes have length u+1, i.e., [i:i+u]
+                start = beta-t 
+                end = start+u # [start:start+u] = [start:end] codes the syncmer containing beta.
+                if start < 0: # beyond the left sentinel
+                    q += 1
+                elif alpha <= end:
+                    q += 1
+                else: # [start:end] <= [0:alpha)
+                    for j in range(k): # The index start+j is the first mutation in the k-mer [start:start+k).
+                        m = start+j # index of mutated letter
+                        eps_theta = (1.0-theta)**j*theta
+                        forbid_rt = max(m,beta) # Either mutation or minmizer destroys syncmer.
+                        q += eps_theta*carp(min(m-k,beta-u-1), theta)*carp(alpha-(forbid_rt+1), theta)
+            q /= u+alpha
+            _carp[alpha] = q
+        return _carp[alpha]
 
 def _test_Syncmer_Open():
     syncmer_open = Syncmer_Open(6,2,3)
@@ -63,9 +97,7 @@ def _test_Syncmer_Open():
 def _test_Syncmer_Open_Simulate():
     r = 100000 #(Monte Carlo realizations)
     np.random.seed(31415)
-
     syncmer_open = Syncmer_Open(6,2,4)
-    # Tests expectation_product_indicators by simulation.
     # Tests expectation_product_indicators by simulation.
     epis_mc = syncmer_open.expectation_product_indicators_monte_carlo(r)
     epis = [ syncmer_open.expectation_product_indicator(i) for i in range(len(epis_mc)) ] # length k

@@ -5,6 +5,8 @@ Syncmer class
 
 from abc import ABC, abstractmethod
 import numpy as np
+from scipy.stats import bernoulli
+from collections import deque
 from jls_submer import Submer
 
 # R. Edgar (2021) 
@@ -59,30 +61,60 @@ class Syncmer(Submer,ABC):
         epis = [a/r for a in epis]
         return epis
     # Returns a list indexed range(n) of non-0 estimates of first_passage_probabilities[0...n).
-    def first_passage_probabilities_monte_carlo(self, r): # r = #(realizations)
+    #   tested in jls_syncmer_parametrized for downsampling with 0.0 < eps.
+    #   untested for mutation with 0.0 < theta.
+    def first_passage_probabilities_monte_carlo(self, 
+            r, # #(realizations)
+            eps=0.0, # downsampling rejection prob
+            theta=0.0): # mutation prob
+        assert 0.0 <= eps < 1.0
+        assert 0.0 <= theta < 1.0
+        k = self.k
         u = self.u
-        # Appends to codes until the next syncmer and 
-        #   returns the distance to the next syncmer.
-        def _distance_to_next_syncmer(codes):
+        # Appends to codes until the next syncmer and returns its distance.
+        def _distance_to_next_syncmer(codes, eps, theta, q):
             assert len(codes) == u+1
+            assert theta == 0.0 or len(q) == k
             i = 0
-            while i == 0 or self.indicator(codes[i:i+u+1]) == 0:
+            while True:
                 codes.append(np.random.uniform())
                 i += 1
+                if self.indicator(codes[i:i+u+1]) == 0: # The k-mer is not a syncmer.
+                    continue 
+                if 0.0 < eps and bernoulli.rvs(eps): # The syncmer is downsampled.
+                    continue
+                if 0.0 < theta: # The syncmer can be mutated.
+                    n = min(i,k)
+                    bs = bernoulli.rvs(theta,size=n)
+                    for j in range(n):
+                        q.pop()
+                        q.appendleft(bs[j])
+                    assert len(q) == k
+                    if not all(b == 0 for b in q): # The syncmer is mutated.
+                        continue
+                break
             return i
-        # The code should work without a window guarantee, so a dictionary is more general than a list.
-        fppd = {0:0.0} # first_passage_probabilities conditioned on initial syncmer
+        q = [0]*k # mutation status
+        if 0.0 < theta: 
+            q = deque(bernoulli.rvs(theta, size=k))
+        # The code needs to work without a window guarantee, so a dictionary is more general than a list.
+        fppd = {0:0} # first_passage_probabilities conditioned on initial syncmer
         codes = list(np.random.uniform(size=u+1))
-        i = _distance_to_next_syncmer(codes)
+        # Initializes codes[0:u] at the next syncmer.
+        i = _distance_to_next_syncmer(codes, eps, theta, q)
         codes = codes[i:]
         assert len(codes) == u+1
         assert self.indicator(codes) == 1
-        # The codes[0:u] constitute a syncmer.
+        if 0.0 < theta: # mutation
+            assert all(b == 0 for b in q)
+        # The codes[0:u] are an unmutated syncmer.
         for total_realizations in range(r):
-            i = _distance_to_next_syncmer(codes)
+            i = _distance_to_next_syncmer(codes, eps, theta, q)
             codes = codes[i:]
             assert len(codes) == u+1
             assert self.indicator(codes) == 1
+            if 0.0 < theta: # mutation
+                assert all(b == 0 for b in q)
             if i not in fppd:
                 fppd[i] = 1
             else:
