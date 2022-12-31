@@ -27,7 +27,7 @@ python theta-from-parametrized-syncmer-count.py -k 10 -s 3 -t 1 -n 100 -u 90 -c 
 
 where closed (k,s)=(10,3) syncmers are now parametrized (k, s, ts)=(10, 3, '0 7') syncmers,<br />
 and open (k,s,t)=(10,3,1) syncmers are now parametrized (k, s, ts)=(10, 3, '1') syncmers.<br />
-The closed syncmers indicate ('0 7') that ts are offset from 0 within the k-mer.
+The closed syncmers indicate ('0 7') that ts are offset from 0 within the k-mer.<br />
 The open syncmer (k, s, ts)=(10, 3, '1') parametrizes its offset at the start of 10-mer.   
 
 Parametrized syncmers now include an option -e for downsampling, e.g., ' -e 0.1' indicates a downsampling probability eps=0.1.<br />
