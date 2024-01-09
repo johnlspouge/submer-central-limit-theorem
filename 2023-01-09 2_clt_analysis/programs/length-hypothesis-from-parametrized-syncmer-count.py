@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Calculates confidence interval for sequence length from count of open syncmers.
+Calculates hypothesis test p-values for sequence length from count of parametrized syncmers.
 """
 # Patterned after:
 #   https://github.com/medvedevgroup/mutation-rate-intervals
@@ -9,32 +9,40 @@ import sys
 sys.path.insert(0,"../modules")
 
 from argparse import ArgumentParser, RawTextHelpFormatter
-from jls_submer import Submer
+import scipy.stats as st
+
 from jls_syncmer_parametrized import Syncmer_Parametrized
+from jls_submer_clt_genome_length import standardized_variate_w
 
 def main(): 
     parser = getArguments()
     argument = parser.parse_args()
     check( argument )  
-
+    count_of_submers = argument.number_of_submers
+    length0 = argument.length0
     k = argument.kmer_length
     s = argument.smer_length
     ts = argument.t_offsets_of_smer
     eps = argument.eps
-    m = argument.max_distance
-    is_test_probabilities = argument.is_test_probabilities
-    
-    submer = Syncmer_Parametrized( k, s, ts, eps )
-    p = []
-    for i in range(0,m+1):    
-        p.append(submer.first_passage_probability(i))
-    if is_test_probabilities:
-        p = Submer.to_test_probabilities(submer.probability(), p)
-    output( p )    
+    syncmer = Syncmer_Parametrized(k, s, ts, eps)
 
-# Outputs array[0...m]. 
-def output( p ):
-    print( *p, sep='\t' )
+    h_output = {}
+    try:
+        w = standardized_variate_w(length0, syncmer, count_of_submers)
+        q = st.norm.cdf(w)
+        h_output["p_1-sided_left"] = q
+        h_output["p_1-sided_right"] = 1.0-q
+        q0 = min(q,1.0-q)
+        h_output["p_2-sided"] = 2.0*q0
+    except:
+        h_output["p_1-sided_left"] = h_output["p_1-sided_right"] = h_output["p_2-sided"] = None
+    output( h_output )    
+
+# Outputs confidence interval of genomic length. 
+#   Outputs [None, None] as the interval if the computation has an abnormal result.
+def output( h_output ):
+    print( *(h_output.keys()), sep='\t' )    
+    print( *(h_output.values()), sep='\t' )
 
 # Check and fixes arguments if possible.    
 def check( argument ):
@@ -52,13 +60,14 @@ def check( argument ):
             raise Exception( f'Error: kmer_length - smer_length < t_offset_of_smer : {u} < {argument.t_offsets_of_smer}.' )
     if not 0.0 <= argument.eps < 1.0:
         raise Exception( f'Error: the downsampling probability must satisfy 0.0 <= eps = {argument.eps} < 1.0.' )
-    if argument.max_distance <= 0:
-        raise Exception( f'Error: max_distance <= 0 : {argument.max_distance} <= 0.' )
-    if not argument.is_test_probabilities:
-        argument.is_test_probabilities = None
+    # remaining arguments
+    if argument.number_of_submers <= 0:
+        raise ValueError( f'Error: length = {argument.number_of_submers} <= 0.' )
+    if argument.length0 <= 0:
+        raise ValueError( f'Error: length = {argument.length} <= 0.' )
         
 def getArguments():
-    parser = ArgumentParser(description='Calculates distance distribution for open syncmers.\n',
+    parser = ArgumentParser(description='Calculates hypothesis test p-values for sequence length from submer count of parametrized syncmers.\n',
                             formatter_class=RawTextHelpFormatter)
     parser.add_argument("-k", "--kmer_length", dest="kmer_length", type=int, required=True, 
                         help="KMER_LENGTH is the open syncmer length k.", metavar="KMER_LENGTH")
@@ -68,10 +77,10 @@ def getArguments():
                         help="T_OFFSETS_OF_SMER is the offset(s) of the minimum s-mer within a paramtrized syncmer.", metavar="T_OFFSETS_OF_SMER")
     parser.add_argument("-e", "--eps", dest="eps", type=float, default=0.0,
                         help="EPS is the rejection probability when downsampling paramtrized syncmers (EPS=0.0 for no downsampling).", metavar="EPS")
-    parser.add_argument("-m", "--max_distance", dest="max_distance", type=int, required=True,
-                        help="MAX_DISTANCE is the maximum distance of interest between open syncmers.")
-    parser.add_argument("-y", "--is_test_probabilities", dest="is_test_probabilities", default=False, action="store_true", # ? alpha-test probabilities ?
-                        help="IS_TEST_PROBABILITIES calculates Shaw & Yu alpha-test probabilities with the flag and first-passage probabilities without it.")
+    parser.add_argument("-n", "--number_of_submers", dest="number_of_submers", type=int, required=True,
+                        help="NUMBER_OF_SUBMERS is the count of open syncmers within a sequence.", metavar="NUMBER_OF_SUBMERS")
+    parser.add_argument("-0", "--length0", dest="length0", type=float, required=True, # # length0, the value of length for hypothesis testing 
+                        help="LENGTH0 is the sequence length for hypothesis testing.", metavar="LENGTH0")
     return parser
     
 if __name__ == "__main__":

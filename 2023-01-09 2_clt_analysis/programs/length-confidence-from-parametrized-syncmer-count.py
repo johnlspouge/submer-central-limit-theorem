@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Calculates confidence interval for sequence length from count of open syncmers.
+Calculates confidence interval for sequence length from count of parametrized syncmers.
 """
 # Patterned after:
 #   https://github.com/medvedevgroup/mutation-rate-intervals
@@ -9,32 +9,40 @@ import sys
 sys.path.insert(0,"../modules")
 
 from argparse import ArgumentParser, RawTextHelpFormatter
-from jls_submer import Submer
-from jls_syncmer_parametrized import Syncmer_Parametrized
+from jls_submer_clt_mgr import to_syncmer_parametrized_Wilson_score_intervals_for_length
+from jls_submer_to_interval_util import to_length_interval
 
 def main(): 
     parser = getArguments()
     argument = parser.parse_args()
     check( argument )  
-
+    count_of_submers = argument.number_of_submers
+    confidence = argument.confidence
+    alpha_0 = 1.0 - confidence # for consistency with z-score
+    is_approximation = argument.is_approximation
     k = argument.kmer_length
     s = argument.smer_length
     ts = argument.t_offsets_of_smer
     eps = argument.eps
-    m = argument.max_distance
-    is_test_probabilities = argument.is_test_probabilities
-    
-    submer = Syncmer_Parametrized( k, s, ts, eps )
-    p = []
-    for i in range(0,m+1):    
-        p.append(submer.first_passage_probability(i))
-    if is_test_probabilities:
-        p = Submer.to_test_probabilities(submer.probability(), p)
-    output( p )    
+    try:
+        h = to_syncmer_parametrized_Wilson_score_intervals_for_length( count_of_submers, alpha_0, k, s, ts, eps, is_approximation )
+        interval = to_length_interval( h )
+    except:
+        interval = [None, None]
+    h_output = {}
+    h_output["sig"] = confidence
+    h_output["method"] = "qualitative"
+    if is_approximation: 
+        h_output["method"] = "estimate"
+    h_output["LengthLow"] = interval[0]
+    h_output["LengthHigh"] = interval[1]
+    output( h_output )    
 
-# Outputs array[0...m]. 
-def output( p ):
-    print( *p, sep='\t' )
+# Outputs confidence interval of genomic length. 
+#   Outputs [None, None] as the interval if the computation has an abnormal result.
+def output( h_output ):
+    print( *(h_output.keys()), sep='\t' )    
+    print( *(h_output.values()), sep='\t' )
 
 # Check and fixes arguments if possible.    
 def check( argument ):
@@ -52,13 +60,15 @@ def check( argument ):
             raise Exception( f'Error: kmer_length - smer_length < t_offset_of_smer : {u} < {argument.t_offsets_of_smer}.' )
     if not 0.0 <= argument.eps < 1.0:
         raise Exception( f'Error: the downsampling probability must satisfy 0.0 <= eps = {argument.eps} < 1.0.' )
-    if argument.max_distance <= 0:
-        raise Exception( f'Error: max_distance <= 0 : {argument.max_distance} <= 0.' )
-    if not argument.is_test_probabilities:
-        argument.is_test_probabilities = None
+    if argument.confidence <= 0.0:
+        raise Exception( f'Error: confidence = {argument.confidence} <= 0.0.' )
+    if 1.0 <= argument.confidence:
+        raise Exception( f'Error: 1.0 <= confidence = {argument.confidence}.' )
+    if not argument.is_approximation:
+        argument.is_approximation = None
         
 def getArguments():
-    parser = ArgumentParser(description='Calculates distance distribution for open syncmers.\n',
+    parser = ArgumentParser(description='Calculates sequence length from submer count of open syncmers.\n',
                             formatter_class=RawTextHelpFormatter)
     parser.add_argument("-k", "--kmer_length", dest="kmer_length", type=int, required=True, 
                         help="KMER_LENGTH is the open syncmer length k.", metavar="KMER_LENGTH")
@@ -68,10 +78,12 @@ def getArguments():
                         help="T_OFFSETS_OF_SMER is the offset(s) of the minimum s-mer within a paramtrized syncmer.", metavar="T_OFFSETS_OF_SMER")
     parser.add_argument("-e", "--eps", dest="eps", type=float, default=0.0,
                         help="EPS is the rejection probability when downsampling paramtrized syncmers (EPS=0.0 for no downsampling).", metavar="EPS")
-    parser.add_argument("-m", "--max_distance", dest="max_distance", type=int, required=True,
-                        help="MAX_DISTANCE is the maximum distance of interest between open syncmers.")
-    parser.add_argument("-y", "--is_test_probabilities", dest="is_test_probabilities", default=False, action="store_true", # ? alpha-test probabilities ?
-                        help="IS_TEST_PROBABILITIES calculates Shaw & Yu alpha-test probabilities with the flag and first-passage probabilities without it.")
+    parser.add_argument("-n", "--number_of_submers", dest="number_of_submers", type=int, required=True,
+                        help="NUMBER_OF_SUBMERS is the count of open syncmers within a sequence.", metavar="NUMBER_OF_SUBMERS")
+    parser.add_argument("-c", "--confidence", dest="confidence", type=float, default=0.95, # size of the confidence interval 
+                        help="CONFIDENCE is the probability that the sequence length lies within the interval [LengthLow, LengthHigh].", metavar="CONFIDENCE")
+    parser.add_argument("-a", "--is_approximation", dest="is_approximation", default=False, action="store_true", # ? use estimate for L in Stein's method ?
+                        help="IS_APPROXIMATION uses the estimate method with the flag and the qualitative method without it.")
     return parser
     
 if __name__ == "__main__":

@@ -9,7 +9,6 @@ import sys
 sys.path.insert(0,"../modules")
 
 from argparse import ArgumentParser, RawTextHelpFormatter
-from jls_submer import Submer
 from jls_syncmer_parametrized import Syncmer_Parametrized
 
 def main(): 
@@ -21,20 +20,20 @@ def main():
     s = argument.smer_length
     ts = argument.t_offsets_of_smer
     eps = argument.eps
-    m = argument.max_distance
-    is_test_probabilities = argument.is_test_probabilities
     
     submer = Syncmer_Parametrized( k, s, ts, eps )
-    p = []
-    for i in range(0,m+1):    
-        p.append(submer.first_passage_probability(i))
-    if is_test_probabilities:
-        p = Submer.to_test_probabilities(submer.probability(), p)
-    output( p )    
+    p = submer.probability()
 
-# Outputs array[0...m]. 
-def output( p ):
-    print( *p, sep='\t' )
+    h_output = {}
+    h_output["islands:genome_fraction_of_starts"] = submer.first_passage_moment(0,k)*p
+    h_output["islands:genome_fraction_of_bases"] = submer.first_passage_moment(1,k)*p
+    h_output["islands:expected_size-biased_size"] = submer.first_passage_moment(2,k)*p
+    output( h_output )    
+
+# Outputs confidence interval of genomic length. 
+def output( h_output ):
+    print( *(h_output.keys()), sep='\t' )    
+    print( *(h_output.values()), sep='\t' )
 
 # Check and fixes arguments if possible.    
 def check( argument ):
@@ -52,10 +51,6 @@ def check( argument ):
             raise Exception( f'Error: kmer_length - smer_length < t_offset_of_smer : {u} < {argument.t_offsets_of_smer}.' )
     if not 0.0 <= argument.eps < 1.0:
         raise Exception( f'Error: the downsampling probability must satisfy 0.0 <= eps = {argument.eps} < 1.0.' )
-    if argument.max_distance <= 0:
-        raise Exception( f'Error: max_distance <= 0 : {argument.max_distance} <= 0.' )
-    if not argument.is_test_probabilities:
-        argument.is_test_probabilities = None
         
 def getArguments():
     parser = ArgumentParser(description='Calculates distance distribution for open syncmers.\n',
@@ -68,10 +63,6 @@ def getArguments():
                         help="T_OFFSETS_OF_SMER is the offset(s) of the minimum s-mer within a paramtrized syncmer.", metavar="T_OFFSETS_OF_SMER")
     parser.add_argument("-e", "--eps", dest="eps", type=float, default=0.0,
                         help="EPS is the rejection probability when downsampling paramtrized syncmers (EPS=0.0 for no downsampling).", metavar="EPS")
-    parser.add_argument("-m", "--max_distance", dest="max_distance", type=int, required=True,
-                        help="MAX_DISTANCE is the maximum distance of interest between open syncmers.")
-    parser.add_argument("-y", "--is_test_probabilities", dest="is_test_probabilities", default=False, action="store_true", # ? alpha-test probabilities ?
-                        help="IS_TEST_PROBABILITIES calculates Shaw & Yu alpha-test probabilities with the flag and first-passage probabilities without it.")
     return parser
     
 if __name__ == "__main__":
