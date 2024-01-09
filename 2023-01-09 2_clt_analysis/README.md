@@ -1,8 +1,8 @@
-# submer-central-limit-theorem
+# syncmer-central-limit-theorem
 
 ## The central limit theorems  (**CLT**s)
 
-The code was inspired by the preprint of
+The code was inspired by 
 
 A. Blanca et al. (2021)<br/> 
 The statistics of k-mers from a sequence undergoing a simple mutation process without spurious matches.<br/> 
