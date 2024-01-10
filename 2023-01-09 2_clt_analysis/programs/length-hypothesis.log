@@ -1,0 +1,48 @@
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 245 -0 1000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.23188707825394594	0.7681129217460541	0.4637741565078919
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 255 -0 1000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.7681129217460541	0.23188707825394594	0.4637741565078919
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 120 -0 1000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.18002805028895036	0.8199719497110496	0.3600561005779007
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 130 -0 1000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.8199719497110496	0.18002805028895041	0.36005610057790083
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 2450 -0 10000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.010031966128902189	0.9899680338710978	0.020063932257804378
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 2550 -0 10000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.9899680338710978	0.010031966128902225	0.02006393225780445
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 1200 -0 10000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.00183806719434573	0.9981619328056542	0.00367613438869146
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 1300 -0 10000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.9981619328056542	0.0018380671943457605	0.003676134388691521
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 24500 -0 100000
+p_1-sided_left	p_1-sided_right	p_2-sided
+9.516619643104971e-14	0.9999999999999049	1.9033239286209941e-13
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 25500 -0 100000
+p_1-sided_left	p_1-sided_right	p_2-sided
+0.9999999999999049	9.514611321037592e-14	1.9029222642075183e-13
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 12000 -0 100000
+p_1-sided_left	p_1-sided_right	p_2-sided
+1.9871302274719704e-20	1.0	3.974260454943941e-20
+
+python length-hypothesis-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 13000 -0 100000
+p_1-sided_left	p_1-sided_right	p_2-sided
+1.0	0.0	0.0
+

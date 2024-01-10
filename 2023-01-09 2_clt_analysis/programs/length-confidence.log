@@ -1,1 +1,24 @@
+python length-confidence-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 100 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	367.3508315817253	435.4890933863735
+
+python length-confidence-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 10000 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	39664.3417305896	40338.49819437848
+
+python length-confidence-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 0 7 -n 1000000 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	3996631.000907222	4003371.839017747
+
+python length-confidence-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 100 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	726.8629616271883	880.415982422599
+
+python length-confidence-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 10000 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	79240.49662740662	80766.78231664316
+
+python length-confidence-from-parametrized-syncmer-count.py  -k 10 -s 3 -t 1 -n 1000000 -c 0.95 
+sig	method	LengthLow	LengthHigh
+0.95	qualitative	7992372.674665686	8007634.604278367
 
