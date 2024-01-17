@@ -6,7 +6,7 @@ The contents of this directory implement confidence intervals and hypothesis tes
 
 ### 1. Contents of programs/
 
-The 'test_make.py' file should run and exit quietly within about 5 minutes if the Python executables are functioning as expected. Besides 'test_make.py', programs/ contains 12 other files relevant to CLTs for parametrized syncmers. The 12 filenames are a concatenation of 4 [PREFIX]-es and 3 [POSTFIX]-es.
+Our programs require programs/ and modules/ to be in the same directory. The 'test_make.py' file should run and exit quietly within about 5 minutes if the Python executables are functioning as expected. Besides 'test_make.py', programs/ contains 12 other files relevant to CLTs for parametrized syncmers. The 12 filenames are a concatenation of 4 [PREFIX]-es and 3 [POSTFIX]-es.
 
 The 4 [PREFIX]-es are:
 
