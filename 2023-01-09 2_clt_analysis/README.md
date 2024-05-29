@@ -1,5 +1,8 @@
 # syncmer-central-limit-theorem
 
+**To download a single directory from a GitHub project, 
+<br>clone the project and then delete the other directories.** 
+
 ## The central limit theorems  (CLTs)
 
 The contents of this directory implement confidence intervals and hypothesis tests for parametrized syncmers (with possible downsampling). Our programs require programs/ and modules/ to be in the same directory. 
